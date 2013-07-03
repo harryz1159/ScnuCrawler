@@ -9,14 +9,23 @@ import java.util.Set;
 
 import org.apache.commons.httpclient.HttpException;
 
+import weibo4j.Weibo;
+
 import com.microblog.common.login.SinaLogin;
 
 public class SinaAccount {
 
 	private static Map<String, String> weiboAccounts = new HashMap<String, String>();
 	private static ArrayList<String> accessTokenList=new ArrayList<>();
-	private static int availableNum = 9;//当前可用账号数
-	private static int accountsNum = 9;//用户输入的账号数
+	/**
+	 * 当前可用账号数
+	 */
+	private static int availableNum = 9;
+	/**
+	 * 用户输入的账号数
+	 */
+	private static int accountsNum = 9;
+	private static Weibo weibo=new Weibo();
 	
 	//以下代码用来从数据库获取用户信息（账号、密码）
 	//目前暂时用以下代码来代替
@@ -88,11 +97,13 @@ public class SinaAccount {
 		return accountsNum;
 	}
 
-	/**
-	 * 返回accessToken列表
-	 * @return accessToken列表
-	 */
-	public static ArrayList<String> getAccessTokenList() {
-		return accessTokenList;
+	public static boolean changeAccessToken()
+	{
+		for(int j = 0;;j = (++j) %accessTokenList.size())
+		{
+			String accessToken=accessTokenList.get(j);
+			if(accessToken!=null)
+				weibo.setToken(accessToken);
+		}
 	}
 }

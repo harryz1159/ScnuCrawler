@@ -86,7 +86,7 @@ public class SinaMicroblogUser extends MicroblogUser {
 	}
 	class SinaWebInterface implements WebInterface
 	{
-		private  ArrayList<String> accessTokenList=SinaAccount.getAccessTokenList();
+		//private  ArrayList<String> accessTokenList=SinaAccount.getAccessTokenList();
 
 		@Override
 		public boolean updateUserInfo() {
