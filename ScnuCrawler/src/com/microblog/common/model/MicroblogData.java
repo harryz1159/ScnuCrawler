@@ -42,11 +42,6 @@ public abstract class MicroblogData {
 	 */
 	private String type = "";
 	/**
-	 * 当type=2时，sourceId即为源微博ID。
-	 */
-	private String sourceId = null;
-	
-	/**
 	 * 设置微博类型。
 	 * @param type 微博类型。
 	 */
@@ -64,22 +59,15 @@ public abstract class MicroblogData {
 	}
 	
 	/**
-	 * 设置原微博ID。
-	 * @param sourceId 原微博ID。
+	 * 设置原微博。
+	 * @param source 原微博。
 	 */
-	public void setSourceId(String sourceId)
-	{
-		this.sourceId = sourceId;
-	}
+	public abstract void setSource(MicroblogData source);
 	/**
-	 * 返回原微博ID（如果有的话）。
-	 * @return 原微博ID。
+	 * 返回原微博（如果有的话）。
+	 * @return 原微博。
 	 */
-	public String getSourceId()
-	{
-		return this.sourceId;
-	}
-	
+	public abstract MicroblogData getSource();
 	/**
 	 * 设置本微博的转发数。
 	 * @param repostsCount 本微博的转发数。

@@ -3,7 +3,17 @@
  */
 package com.microblog.common.model;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+
+import weibo4j.Timeline;
+import weibo4j.Users;
+import weibo4j.model.Paging;
+import weibo4j.model.Status;
+import weibo4j.model.StatusWapper;
+import weibo4j.model.User;
+import weibo4j.model.WeiboException;
 
 import com.microblog.common.accounts.manager.SinaAccount;
 import com.scnu.crawler.util.web.WebInterface;
@@ -86,18 +96,69 @@ public class SinaMicroblogUser extends MicroblogUser {
 	}
 	class SinaWebInterface implements WebInterface
 	{
-		//private  ArrayList<String> accessTokenList=SinaAccount.getAccessTokenList();
 
 		@Override
 		public boolean updateUserInfo() {
 			// TODO Auto-generated method stub
+			Users um=new Users();
+			int tryTimes=0;
+			for (tryTimes = 0; tryTimes < 3; tryTimes++) {
+				try {
+					SinaAccount.reduceRemainingHits();
+					User user = um.showUserById(getKey());
+					setName(user.getName());
+					setScreenName(user.getScreenName());
+					setGender(user.getGender());
+					setProvince(Integer.toString(user.getProvince()));
+					setFansCount(user.getFollowersCount());
+					setIdolsCount(user.getFriendsCount());
+					setStatusesCount(user.getStatusesCount());
+					return true;
+				} catch (WeiboException e) {
+					// TODO 自动生成的 catch 块
+					e.printStackTrace();
+					System.out.println("获取用户信息错误或者网络链接超时。。。\n将在3.6秒后重试。。。");
+					try {
+						Thread.sleep(3600);
+					} catch (InterruptedException e1) {
+						// TODO 自动生成的 catch 块
+						e1.printStackTrace();
+					}
+				}
+			}
+			System.out.println("超时重试次数达到上限："+ tryTimes +"次，将跳过该用户！");
 			return false;
 		}
 
 		@Override
-		public ArrayList<? extends MicroblogData> getUserStatuses() {
+		public ArrayList<SinaMicroblogData> getUserStatuses() {
 			// TODO Auto-generated method stub
-			return null;
+			int weiboCount=0;
+			int statusesPerPage=100;
+			boolean isFirstTime = true;
+			String firstStatusCreateTime=null;
+			System.out.println("正准备获取" + getKey() + "的微博内容。。。");
+			SimpleDateFormat t = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Timeline tm = new Timeline();
+			ArrayList<SinaMicroblogData>  statusesList  = new ArrayList<SinaMicroblogData>();
+			int statusesPageCount=(int) Math.ceil(((double)getStatusesCount())/statusesPerPage);
+			for(int i=1;i<=statusesPageCount;i++)
+			{
+				for(int tryTimes=0;tryTimes<3;tryTimes++)
+				{
+					SinaAccount.reduceRemainingHits();
+					StatusWapper statuses = tm.getUserTimelineByUid(getKey(),new Paging(i,statusesPerPage),0,0);
+					for(Status status:statuses.getStatuses())
+					{
+						String createTime=t.format(status.getCreatedAt()); 	//注意日期的显示格式，关系到数据库里的排序
+						if(isFirstTime)
+						{
+							firstStatusCreateTime=createTime;
+							isFirstTime=false;
+						}
+					}
+				}
+			}
 		}
 
 		@Override
@@ -110,6 +171,34 @@ public class SinaMicroblogUser extends MicroblogUser {
 		public ArrayList<String> getUserIdolsList() {
 			// TODO Auto-generated method stub
 			return null;
+		}
+		/**
+		 * 将新浪微博Status类转化为SinaMicroblogData类。
+		 * @param status 新浪微博Status类。
+		 * @return SinaMicroblogData类。
+		 */
+		private SinaMicroblogData Status2MicroblogData(Status status)
+		{
+			SimpleDateFormat t = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			SinaMicroblogData mdata = new SinaMicroblogData();
+			String createTime = t.format(status.getCreatedAt());
+			mdata.setMicroblogID(status.getId());
+			mdata.setText(status.getText());
+			mdata.setPicSrc(status.getOriginalPic());
+			mdata.setUser(SinaMicroblogUser.this);
+			mdata.setCreatTime(createTime);	 //注意日期的显示格式，关系到数据库里的排序
+			mdata.setCollectTime(t.format(new Date()));
+			mdata.setCommentsCount(status.getCommentsCount());
+			mdata.setRepostsCount(status.getRepostsCount());
+			Status retweetedStatus=status.getRetweetedStatus();
+			if(retweetedStatus!=null)
+			{
+				mdata.setType("2");
+				mdata.setSource(Status2MicroblogData(retweetedStatus));
+			}
+			else
+				mdata.setType("1");
+			return mdata;
 		}
 	}
 
