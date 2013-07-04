@@ -146,19 +146,45 @@ public class SinaMicroblogUser extends MicroblogUser {
 			{
 				for(int tryTimes=0;tryTimes<3;tryTimes++)
 				{
-					SinaAccount.reduceRemainingHits();
-					StatusWapper statuses = tm.getUserTimelineByUid(getKey(),new Paging(i,statusesPerPage),0,0);
-					for(Status status:statuses.getStatuses())
-					{
-						String createTime=t.format(status.getCreatedAt()); 	//注意日期的显示格式，关系到数据库里的排序
-						if(isFirstTime)
+					try {
+						SinaAccount.reduceRemainingHits();
+						StatusWapper statuses = tm.getUserTimelineByUid(getKey(),new Paging(i,statusesPerPage),0,0);
+						for(Status status:statuses.getStatuses())
 						{
-							firstStatusCreateTime=createTime;
-							isFirstTime=false;
+							String createTime=t.format(status.getCreatedAt()); 	//注意日期的显示格式，关系到数据库里的排序
+							if(isFirstTime)
+							{
+								firstStatusCreateTime=createTime;
+								isFirstTime=false;
+							}
+							if(createTime.compareTo(getSinceCreateTime()) <= 0)
+							{
+								System.out.println("本页内容已经在上次运行时抓取过，本页及以后的数据不再重复抓取。");
+								System.out.println("本次获取" + weiboCount + "条微博内容。");
+								if (firstStatusCreateTime.compareTo(getSinceCreateTime())>0) {
+									setSinceCreateTime(firstStatusCreateTime);
+								}
+								setSinceCollectTime(t.format(new Date()));
+								return statusesList;
+							}
+							SinaMicroblogData mdata = Status2MicroblogData(status);
+							System.out.println(mdata.getText());
+							statusesList.add(mdata);
+							weiboCount++;
 						}
+						break;
+					} catch (WeiboException e) {
+						// TODO 自动生成的 catch 块
+						e.printStackTrace();
+						System.out.println("获取本页微博内容出错。。。\n将重试。。。");
 					}
 				}
 			}
+			System.out.println("本次获取" + weiboCount + "条微博内容。");
+			if (firstStatusCreateTime.compareTo(getSinceCreateTime())>0)
+				setSinceCreateTime(firstStatusCreateTime);
+			setSinceCollectTime(t.format(new Date()));
+			return statusesList;
 		}
 
 		@Override

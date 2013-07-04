@@ -476,7 +476,7 @@ public class SinaCrawler {
     				changeAccessToken();		//捕捉到异常有可能是超出调用次数限制了，因此更换access token
     				e.printStackTrace();
             	}
-    		}        	
+    		}       	
         	//updateRemaining_hits();		//更新剩余次数的值
         	System.out.println("正在获取" + user.getUserId() + "的微博内容。。。");
         }
