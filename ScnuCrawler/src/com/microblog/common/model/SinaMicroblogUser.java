@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import weibo4j.Friendships;
 import weibo4j.Timeline;
 import weibo4j.Users;
 import weibo4j.model.Paging;
@@ -132,7 +133,6 @@ public class SinaMicroblogUser extends MicroblogUser {
 
 		@Override
 		public ArrayList<SinaMicroblogData> getUserStatuses() {
-			// TODO Auto-generated method stub
 			int weiboCount=0;
 			int statusesPerPage=100;
 			boolean isFirstTime = true;
@@ -188,14 +188,36 @@ public class SinaMicroblogUser extends MicroblogUser {
 		}
 
 		@Override
-		public ArrayList<String> getUserFansList() {
-			// TODO Auto-generated method stub
+		public String[] getUserFansList() {
+			int fansPerPage=5000;
+			Friendships fm = new Friendships();
+			int tryTimes;
+			for(tryTimes=0;tryTimes<3;tryTimes++)
+			{
+				try {
+					SinaAccount.reduceRemainingHits();
+					String[] ids = fm.getFollowersIdsById(getKey(), fansPerPage, 0);
+					System.out.println("共获得" + ids.length + "个粉丝。"); 
+					return ids;
+				} catch (WeiboException e) {
+					// TODO 自动生成的 catch 块
+					e.printStackTrace();
+					System.out.println("获取用户粉丝列表出错或者网络链接超时。。。\n将在3.6秒后重试。。。");
+					try {
+						Thread.sleep(3600);
+					} catch (InterruptedException e1) {
+						// TODO 自动生成的 catch 块
+						e1.printStackTrace();
+					}
+				}
+			}
+			System.out.println("超时重试次数达到上限："+ tryTimes +"次，将跳过该用户！");
 			return null;
 		}
 
 		@Override
-		public ArrayList<String> getUserIdolsList() {
-			// TODO Auto-generated method stub
+		public String[] getUserIdolsList() {
+			int FriendsPageCount = 5000;
 			return null;
 		}
 		/**

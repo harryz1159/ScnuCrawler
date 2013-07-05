@@ -10,6 +10,14 @@ package com.microblog.common.model;
 public class TencentMicroblogUser extends MicroblogUser {
 
 	/**
+	 * 腾讯微博用户标识。
+	 * @param key
+	 */
+	public TencentMicroblogUser(String key) {
+		super(key);
+		// TODO 自动生成的构造函数存根
+	}
+	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 9199822593462686281L;

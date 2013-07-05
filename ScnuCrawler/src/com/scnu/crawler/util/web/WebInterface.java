@@ -20,18 +20,18 @@ public interface WebInterface {
 	boolean updateUserInfo();
 	/**
 	 * 获取用户的所有微博信息。
-	 * @return 用户微博信息列表。
+	 * @return 用户微博信息列表，可能包含0条微博信息。
 	 */
 	ArrayList<? extends MicroblogData> getUserStatuses();
 	/**
-	 * 返回用户粉丝列表。
+	 * 返回用户粉丝列表。如果出现异常会返回null。
 	 * @return 用户粉丝的唯一标识列表。
 	 */
-	ArrayList<String> getUserFansList();
+	String[] getUserFansList();
 	/**
-	 * 返回用户关注列表。
+	 * 返回用户关注列表。如果出现异常会返回null。
 	 * @return 用户关注的唯一标识列表。
 	 */
-	ArrayList<String> getUserIdolsList();
+	String[] getUserIdolsList();
 
 }
