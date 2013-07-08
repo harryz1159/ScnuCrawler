@@ -31,5 +31,7 @@
 	<classpathentry kind="lib" path="lib/zookeeper-3.4.5.jar"/>
 	<classpathentry kind="lib" path="lib/guava-11.0.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JDO-core"/>
+	<classpathentry kind="lib" path="F:/云水寒/Documents/学习/程序语言设计/Java/JDO/datanucleus-accessplatform-full-nodeps-3.2.3/lib/datanucleus-rdbms-3.2.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

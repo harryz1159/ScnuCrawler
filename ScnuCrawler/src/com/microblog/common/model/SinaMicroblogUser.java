@@ -29,7 +29,6 @@ public class SinaMicroblogUser extends MicroblogUser {
 	 */
 	public SinaMicroblogUser(String key) {
 		super(key);
-		// TODO Auto-generated constructor stub
 	}
 	/**
 	 * 
@@ -93,7 +92,7 @@ public class SinaMicroblogUser extends MicroblogUser {
 	@Override
 	public WebInterface webInterface() {
 		// TODO Auto-generated method stub
-		return null;
+		return new SinaWebInterface();
 	}
 	class SinaWebInterface implements WebInterface
 	{
@@ -218,6 +217,28 @@ public class SinaMicroblogUser extends MicroblogUser {
 		@Override
 		public String[] getUserIdolsList() {
 			int FriendsPageCount = 5000;
+			Friendships fm = new Friendships();
+			int tryTimes;
+			for(tryTimes=0;tryTimes<3;tryTimes++)
+			{
+				try {
+					SinaAccount.reduceRemainingHits();
+					String[] ids = fm.getFriendsIdsByUid(getKey(), FriendsPageCount, 0);
+					System.out.println("共获得" + ids.length + "个关注对象。"); 
+					return ids;
+				} catch (WeiboException e) {
+					// TODO 自动生成的 catch 块
+					e.printStackTrace();
+					System.out.println("获取用户关注列表出错或者网络链接超时。。。\n将在3.6秒后重试。。。");
+					try {
+						Thread.sleep(3600);
+					} catch (InterruptedException e1) {
+						// TODO 自动生成的 catch 块
+						e1.printStackTrace();
+					}
+				}
+			}
+			System.out.println("超时重试次数达到上限："+ tryTimes +"次，将跳过该用户！");
 			return null;
 		}
 		/**
