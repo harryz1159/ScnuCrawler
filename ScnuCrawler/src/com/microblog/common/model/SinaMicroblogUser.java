@@ -3,7 +3,6 @@
  */
 package com.microblog.common.model;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -135,9 +134,9 @@ public class SinaMicroblogUser extends MicroblogUser {
 			int weiboCount=0;
 			int statusesPerPage=100;
 			boolean isFirstTime = true;
-			String firstStatusCreateTime=null;
+			long firstStatusCreateTime=0;
 			System.out.println("正准备获取" + getKey() + "的微博内容。。。");
-			SimpleDateFormat t = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			//SimpleDateFormat t = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Timeline tm = new Timeline();
 			ArrayList<SinaMicroblogData>  statusesList  = new ArrayList<SinaMicroblogData>();
 			int statusesPageCount=(int) Math.ceil(((double)getStatusesCount())/statusesPerPage);
@@ -150,20 +149,20 @@ public class SinaMicroblogUser extends MicroblogUser {
 						StatusWapper statuses = tm.getUserTimelineByUid(getKey(),new Paging(i,statusesPerPage),0,0);
 						for(Status status:statuses.getStatuses())
 						{
-							String createTime=t.format(status.getCreatedAt()); 	//注意日期的显示格式，关系到数据库里的排序
+							long createTime=status.getCreatedAt().getTime(); 	//注意日期的显示格式，关系到数据库里的排序
 							if(isFirstTime)
 							{
 								firstStatusCreateTime=createTime;
 								isFirstTime=false;
 							}
-							if(createTime.compareTo(getSinceCreateTime()) <= 0)
+							if(createTime-getSinceCreateTime() <= 0)
 							{
 								System.out.println("本页内容已经在上次运行时抓取过，本页及以后的数据不再重复抓取。");
 								System.out.println("本次获取" + weiboCount + "条微博内容。");
-								if (firstStatusCreateTime.compareTo(getSinceCreateTime())>0) {
+								if (firstStatusCreateTime-getSinceCreateTime()>0) {
 									setSinceCreateTime(firstStatusCreateTime);
 								}
-								setSinceCollectTime(t.format(new Date()));
+								setSinceCollectTime(new Date().getTime());
 								return statusesList;
 							}
 							SinaMicroblogData mdata = Status2MicroblogData(status);
@@ -180,9 +179,9 @@ public class SinaMicroblogUser extends MicroblogUser {
 				}
 			}
 			System.out.println("本次获取" + weiboCount + "条微博内容。");
-			if (firstStatusCreateTime.compareTo(getSinceCreateTime())>0)
+			if (firstStatusCreateTime-getSinceCreateTime()>0)
 				setSinceCreateTime(firstStatusCreateTime);
-			setSinceCollectTime(t.format(new Date()));
+			setSinceCollectTime(new Date().getTime());
 			return statusesList;
 		}
 
@@ -248,15 +247,15 @@ public class SinaMicroblogUser extends MicroblogUser {
 		 */
 		private SinaMicroblogData Status2MicroblogData(Status status)
 		{
-			SimpleDateFormat t = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			//SimpleDateFormat t = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			SinaMicroblogData mdata = new SinaMicroblogData();
-			String createTime = t.format(status.getCreatedAt());
+			long createTime = status.getCreatedAt().getTime();
 			mdata.setMicroblogID(status.getId());
 			mdata.setText(status.getText());
 			mdata.setPicSrc(status.getOriginalPic());
 			mdata.setUser(SinaMicroblogUser.this);
 			mdata.setCreatTime(createTime);	 //注意日期的显示格式，关系到数据库里的排序
-			mdata.setCollectTime(t.format(new Date()));
+			mdata.setCollectTime(new Date().getTime());
 			mdata.setCommentsCount(status.getCommentsCount());
 			mdata.setRepostsCount(status.getRepostsCount());
 			Status retweetedStatus=status.getRetweetedStatus();

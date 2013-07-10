@@ -50,19 +50,19 @@ public abstract class MicroblogUser implements java.io.Serializable{
 	/**
 	 * 上次抓取的该用户第一条微博创建时间
 	 */
-	private String sinceCreateTime = "";
+	private long sinceCreateTime = 0;
 	/**
 	 * 上次抓取该用户微博数据完毕时的时间
 	 */
-	private String sinceCollectTime = "";
+	private long sinceCollectTime = 0;
 
 	
-	public void setSinceCollectTime(String sinceCollectTime)
+	public void setSinceCollectTime(long sinceCollectTime)
 	{
-		this.sinceCollectTime = sinceCreateTime;
+		this.sinceCollectTime = sinceCollectTime;
 	}
 	
-	public void setSinceCreateTime(String sinceCreateTime)
+	public void setSinceCreateTime(long sinceCreateTime)
 	{
 		this.sinceCreateTime = sinceCreateTime;
 	}
@@ -85,12 +85,12 @@ public abstract class MicroblogUser implements java.io.Serializable{
 	//	this.createdAt = createdAt;
 	//}
 	
-	public String getSinceCollectTime()
+	public long getSinceCollectTime()
 	{
 		return sinceCollectTime;
 	}
 	
-	public String getSinceCreateTime()
+	public long getSinceCreateTime()
 	{
 		return sinceCreateTime;
 	}

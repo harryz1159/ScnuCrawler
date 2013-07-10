@@ -7,8 +7,10 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 
+import javax.jdo.FetchPlan;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
@@ -103,6 +105,22 @@ public class DaoManager {
 	public <T> T storeToDataStore(T pc)
 	{
 		return pm.makePersistent(pc);
+	}
+	/**
+	 * 设置特定微博用户的状态。
+	 * @param user 微博用户。
+	 * @param state 状态（是否之后要被访问）。
+	 */
+	public void setUserState(MicroblogUser user,boolean state)
+	{
+		user.setToBeView(state);
+		pm.makePersistent(user);
+	}
+	public <T extends MicroblogUser> List<T> getUserByState(Class<T> type,boolean state)
+	{
+		Query q=pm.newQuery("");
+		q.getFetchPlan().setFetchSize(FetchPlan.FETCH_SIZE_OPTIMAL);
+		q.addExtension("datanucleus.query.loadResultsAtCommit", "false");
 	}
 
 }
