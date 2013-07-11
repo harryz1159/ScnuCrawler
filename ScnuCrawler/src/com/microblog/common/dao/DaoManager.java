@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -116,11 +117,19 @@ public class DaoManager {
 		user.setToBeView(state);
 		pm.makePersistent(user);
 	}
+	/**
+	 * 获取toBeView为指定值的微博用户列表。
+	 * @param type 微博用户类型（新浪or腾讯）。
+	 * @param state toBeView的指定值。
+	 * @return 满足要求的微博用户列表。
+	 */
 	public <T extends MicroblogUser> List<T> getUserByState(Class<T> type,boolean state)
 	{
-		Query q=pm.newQuery("");
+		String currentTime=Long.toString(new Date().getTime());
+		Query q=pm.newQuery("SELECT FROM "+type.getName()+" WHERE (idolsCount>2||fansCount>2||"+currentTime+"-sinceCollectTime>min_interval)&&toBeView=="+state+" PARAMETERS long min_interval");
 		q.getFetchPlan().setFetchSize(FetchPlan.FETCH_SIZE_OPTIMAL);
 		q.addExtension("datanucleus.query.loadResultsAtCommit", "false");
+		return (List<T>) q.execute(30*60*1000);
 	}
 
 }
