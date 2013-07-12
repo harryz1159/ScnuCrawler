@@ -118,7 +118,7 @@ public class DaoManager {
 		pm.makePersistent(user);
 	}
 	/**
-	 * 获取toBeView为指定值的微博用户列表。
+	 * 获取toBeView为指定值的微博用户列表。粉丝数少于2且关注数少于2且最近抓取过的微博用户不在返回列表中。
 	 * @param type 微博用户类型（新浪or腾讯）。
 	 * @param state toBeView的指定值。
 	 * @return 满足要求的微博用户列表。
