@@ -28,25 +28,34 @@ public class DaoManager {
 	private static PersistenceManagerFactory pmf;
 	private PersistenceManager pm=pmf.getPersistenceManager();
 	private Transaction tx=pm.currentTransaction();
+	private Query q=pm.newQuery();
 	static
 	{
 		BufferedReader in=null;
+		Properties jdoPro=new Properties();
 		try {
 			in=new BufferedReader(new FileReader("daoconfig"));
+			jdoPro.load(in);
 		} catch (FileNotFoundException e) {
 			// TODO 自动生成的 catch 块
 			e.printStackTrace();
 			System.err.println("找不到daoconfig文件，请确保该文件位于程序目录中！");
 			System.exit(1);
-		}
-		Properties jdoPro=new Properties();
-		try {
-			jdoPro.load(in);
 		} catch (IOException e) {
 			// TODO 自动生成的 catch 块
 			e.printStackTrace();
 			System.err.println("读取daoconfig文件出错！");
 			System.exit(1);
+		}
+		finally
+		{
+			if(in!=null)
+				try {
+					in.close();
+				} catch (IOException e) {
+					// TODO 自动生成的 catch 块
+					e.printStackTrace();
+				}
 		}
 		jdoPro.put("javax.jdo.PersistenceManagerFactoryClass", "org.datanucleus.api.jdo.JDOPersistenceManagerFactory");
 		jdoPro.put("javax.jdo.option.RetainValues", "false");
@@ -125,11 +134,21 @@ public class DaoManager {
 	 */
 	public <T extends MicroblogUser> List<T> getUserByState(Class<T> type,boolean state)
 	{
-		String currentTime=Long.toString(new Date().getTime());
-		Query q=pm.newQuery("SELECT FROM "+type.getName()+" WHERE (idolsCount>2||fansCount>2||"+currentTime+"-sinceCollectTime>min_interval)&&toBeView=="+state+" PARAMETERS long min_interval");
+		long currentTime=new Date().getTime();
+		q.setClass(type);
+		q.setFilter("idolsCount>2||fansCount>2||currentTime-sinceCollectTime>min_interval)&&toBeView==state");
+		q.declareParameters("long currentTime,long min_interval,boolean state");
 		q.getFetchPlan().setFetchSize(FetchPlan.FETCH_SIZE_OPTIMAL);
 		q.addExtension("datanucleus.query.loadResultsAtCommit", "false");
-		return (List<T>) q.execute(30*60*1000);
+		return (List<T>) q.execute(currentTime,30*60*1000,state);
+	}
+	/**
+	 * 关闭查询，所有查询一旦使用完毕都应该被关闭。
+	 * @param qresult 被关闭查询的查询结果。
+	 */
+	public void closeQuery(Object qresult)
+	{
+		q.close(qresult);
 	}
 
 }
