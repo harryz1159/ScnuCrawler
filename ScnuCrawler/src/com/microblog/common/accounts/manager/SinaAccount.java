@@ -78,6 +78,10 @@ public class SinaAccount {
 				e.printStackTrace();
 			}
 	}
+	static
+	{
+		setWeiboAccount();
+	}
 	
 	/**
 	 * 获取新浪微博账号信息
@@ -85,7 +89,6 @@ public class SinaAccount {
 	 * */
 	public static Map<String, String> getWeiboAccounts()
 	{
-		//this.setWeiboAccount();
 		return weiboAccounts;
 	}
 	

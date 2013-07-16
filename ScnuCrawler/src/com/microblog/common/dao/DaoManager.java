@@ -7,6 +7,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -73,7 +75,13 @@ public class DaoManager {
 	 */
 	public <T extends MicroblogUser> T getUserByKey(String key,Class<T> type)
 	{
-		return pm.getObjectById(type, key);
+		try {
+			return pm.getObjectById(type, key);
+		} catch ( javax.jdo.JDOObjectNotFoundException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+			return null;
+		}
 	}
 	/**
 	 * 设置存储空间中所有微博用户的toBeView字段。
@@ -83,7 +91,7 @@ public class DaoManager {
 	 */
 	public long setUsersState(Class<? extends MicroblogUser> type,boolean state)
 	{
-		Query query=pm.newQuery("UPDATE "+type.getName()+" SET this.toBeView=state where this.toBeView=!state PARAMETERS boolean state");
+		Query query=pm.newQuery("UPDATE "+type.getName()+" SET this.toBeView=state WHERE this.toBeView!=state PARAMETERS boolean state");
 		return (Long) query.execute(state);
 	}
 	/**
@@ -132,15 +140,29 @@ public class DaoManager {
 	 * @param state toBeView的指定值。
 	 * @return 满足要求的微博用户列表。
 	 */
-	public <T extends MicroblogUser> List<T> getUserByState(Class<T> type,boolean state)
+	public <T extends MicroblogUser> Collection<T> getUserByState(Class<T> type,boolean state)
 	{
 		long currentTime=new Date().getTime();
-		q.setClass(type);
-		q.setFilter("idolsCount>2||fansCount>2||currentTime-sinceCollectTime>min_interval)&&toBeView==state");
-		q.declareParameters("long currentTime,long min_interval,boolean state");
-		q.getFetchPlan().setFetchSize(FetchPlan.FETCH_SIZE_OPTIMAL);
-		q.addExtension("datanucleus.query.loadResultsAtCommit", "false");
-		return (List<T>) q.execute(currentTime,30*60*1000,state);
+		Collection<T> result=null;
+		try {
+			tx.begin();
+			q.setClass(type);
+			q.setFilter("(idolsCount>2||fansCount>2||currentTime-sinceCollectTime>min_interval)&&toBeView==state");
+			q.declareParameters("long currentTime,long min_interval,boolean state");
+			q.getFetchPlan().setFetchSize(FetchPlan.FETCH_SIZE_OPTIMAL);
+			q.addExtension("datanucleus.query.loadResultsAtCommit", "false");
+			result = pm.detachCopyAll((List<T>)q.execute(currentTime, 30 * 60 * 1000, state));
+			System.out.println(result.size());
+			tx.commit();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		finally
+		{
+			if(tx.isActive())
+				tx.rollback();
+		}
+		return result;
 	}
 	/**
 	 * 关闭查询，所有查询一旦使用完毕都应该被关闭。

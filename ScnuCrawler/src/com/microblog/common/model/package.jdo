@@ -38,7 +38,7 @@
                   persistence-modifier="persistent"/>
         </class>
         <class
-              name="SinaMicroblogData">
+              name="SinaMicroblogData" detachable="true">
             <field
                   name="user"
                   persistence-modifier="persistent"/>
@@ -47,7 +47,7 @@
                   persistence-modifier="persistent"/>
         </class>
         <class
-              name="TencentMicroblogUser">
+              name="TencentMicroblogUser" detachable="true">
             <field
                   name="openId"
                   persistence-modifier="none"/>
@@ -56,7 +56,7 @@
                   persistence-modifier="none"/>
         </class>
         <class
-              name="TencentMicroblogData">
+              name="TencentMicroblogData" detachable="true">
             <field
                   name="user"
                   persistence-modifier="persistent"/>
@@ -94,7 +94,7 @@
                   persistence-modifier="persistent"/>
         </class>
         <class
-              name="SinaMicroblogUser">
+              name="SinaMicroblogUser" detachable="true">
             <field
                   name="name"
                   persistence-modifier="none"/>

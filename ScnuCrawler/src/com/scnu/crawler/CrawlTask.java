@@ -11,8 +11,8 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -171,8 +171,8 @@ public class CrawlTask {
 		int nullTimes=0;
 		while(nullTimes<2)
 		{
-			List<? extends MicroblogUser> toBeView=dm.getUserByState(type, true);
-			if(toBeView.isEmpty())
+			Collection<? extends MicroblogUser> toBeView=dm.getUserByState(type, true);
+			if(toBeView==null||toBeView.isEmpty())
 			{
 				nullTimes++;
 				dm.closeQuery(toBeView);
