@@ -84,11 +84,14 @@ public class SinaLogin {
 					String code = retUrl.substring(begin + 5, end);
 					if (code != null) {
 						Oauth oauth = new Oauth();
-						try{
-							AccessToken accesstoken = oauth.getAccessTokenByCode(code);
-							return accesstoken;
-						}catch(Exception e){
-							e.printStackTrace();
+						for (int i = 0; i < 3; i++) {
+							try {
+								AccessToken accesstoken = oauth
+										.getAccessTokenByCode(code);
+								return accesstoken;
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
 						}
 					}
 				}

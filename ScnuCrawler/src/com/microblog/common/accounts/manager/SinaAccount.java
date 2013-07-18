@@ -11,6 +11,7 @@ import org.apache.commons.httpclient.HttpException;
 
 import weibo4j.Account;
 import weibo4j.Weibo;
+import weibo4j.http.AccessToken;
 import weibo4j.model.RateLimitStatus;
 import weibo4j.model.WeiboException;
 
@@ -68,8 +69,11 @@ public class SinaAccount {
 		accountsNum = weiboAccounts.size();
 		Set<Entry<String, String>> accounts=weiboAccounts.entrySet();
 		for(Entry<String,String> account:accounts)
+		{
 			try {
-				accessTokenList.add(SinaLogin.getToken(account.getKey(), account.getValue()).getAccessToken());
+				AccessToken at=SinaLogin.getToken(account.getKey(), account.getValue());
+				if(at!=null)
+					accessTokenList.add(at.getAccessToken());
 			} catch (HttpException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -77,6 +81,7 @@ public class SinaAccount {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}
 	}
 	static
 	{
