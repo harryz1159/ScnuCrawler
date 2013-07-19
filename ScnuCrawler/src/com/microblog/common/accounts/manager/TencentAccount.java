@@ -5,21 +5,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TencentAccount {
-//获取账户信息必须先实例化 因此不提供静态方法
+	private static  Map<String, String> tencentAccounts = new HashMap<String, String>();
 	/**
-	 * @param args
+	 * 当前可用账号数
 	 */
-	private static  ArrayList<Map<String, String>> tencentAccounts = new ArrayList<Map<String, String>>();
-	private static int availableNum = 9;//当前可用账号数
-	private static int accountsNum = 9;//用户输入的账号数
+	private static int availableNum = 9;
+	/**
+	 * 用户输入的账号数
+	 */
+	private static int accountsNum = 9;
 	
 	//暂时用以下方法来获取测试账号信息，以后考虑读取数据库的方式
 	public static void setTencentAccount()
 	{
-		Map<String, String> map1 = new HashMap<String, String>();
-		map1.put("qq", "2631804320"/*"1766412707"*/);
-		map1.put("password", "scnu123456");
-		tencentAccounts.add(map1);
+		tencentAccounts.put( "2631804320","scnu123456");
 		
 		Map<String, String> map2 = new HashMap<String, String>();
 		map2.put("qq", "1838572665");
