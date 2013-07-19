@@ -3,6 +3,10 @@
  */
 package com.microblog.common.model;
 
+import java.util.ArrayList;
+
+import com.scnu.crawler.util.web.WebInterface;
+
 /**
  * @author 云水寒
  *
@@ -75,6 +79,39 @@ public class TencentMicroblogUser extends MicroblogUser {
 	public String toString() {
 		// TODO Auto-generated method stub
 		return super.toString()+", opedid="+openId+", nick="+nick;
+	}
+	@Override
+	public WebInterface webInterface() {
+		// TODO 自动生成的方法存根
+		return null;
+	}
+	class TencentWebInterface implements WebInterface
+	{
+
+		@Override
+		public boolean updateUserInfo() {
+			// TODO 自动生成的方法存根
+			return false;
+		}
+
+		@Override
+		public ArrayList<? extends MicroblogData> getUserStatuses() {
+			// TODO 自动生成的方法存根
+			return null;
+		}
+
+		@Override
+		public String[] getUserFansList() {
+			// TODO 自动生成的方法存根
+			return null;
+		}
+
+		@Override
+		public String[] getUserIdolsList() {
+			// TODO 自动生成的方法存根
+			return null;
+		}
+		
 	}
 
 }
