@@ -1,11 +1,14 @@
 package com.microblog.common.accounts.manager;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.microblog.common.login.TencentLogin;
+import com.tencent.weibo.oauthv2.OAuthV2;
+
 public class TencentAccount {
 	private static  Map<String, String> tencentAccounts = new HashMap<String, String>();
+	private static OAuthV2 oa=null;
 	/**
 	 * 当前可用账号数
 	 */
@@ -20,40 +23,19 @@ public class TencentAccount {
 	{
 		tencentAccounts.put( "2631804320","scnu123456");
 		
-		Map<String, String> map2 = new HashMap<String, String>();
-		map2.put("qq", "1838572665");
-		map2.put("password", "scnu123456");
-		tencentAccounts.add(map2);
+		tencentAccounts.put("1838572665","1838572665");
 		
-		Map<String, String> map3 = new HashMap<String, String>();
-		map3.put("qq", "2508355919");
-		map3.put("password", "scnu123456");
-		tencentAccounts.add(map3);
+		tencentAccounts.put("2508355919","scnu123456");
 		
-		Map<String, String> map4 = new HashMap<String, String>();
-		map4.put("qq", "1766412707"/*"1838572665"*/);
-		map4.put("password", "scnu123456");
-		tencentAccounts.add(map4);
+		tencentAccounts.put("1766412707","scnu123456");
 		
-		Map<String, String> map5 = new HashMap<String, String>();
-		map5.put("qq", "1721022799");
-		map5.put("password", "scnu123456");
-		tencentAccounts.add(map5);
+		tencentAccounts.put("1721022799","scnu123456");
 		
-		Map<String, String> map6 = new HashMap<String, String>();
-		map6.put("qq", "1939524077");
-		map6.put("password", "scnu123456");
-		tencentAccounts.add(map6);
+		tencentAccounts.put("1939524077", "scnu123456");
 		
-		Map<String, String> map7 = new HashMap<String, String>();
-		map7.put("qq", "2609859304");
-		map7.put("password", "scnu123456");
-		tencentAccounts.add(map7);
+		tencentAccounts.put("2609859304","scnu123456");
 		
-		Map<String, String> map8 = new HashMap<String, String>();
-		map8.put("qq", "2571134610");
-		map8.put("password", "scnu123456");
-		tencentAccounts.add(map8);
+		tencentAccounts.put("2571134610","scnu123456");
 		
 		//密码错误
 		/*Map<String, String> map9 = new HashMap<String, String>();
@@ -61,30 +43,33 @@ public class TencentAccount {
 		map9.put("password", "scnu123456");
 		tencentAccounts.add(map9);*/
 		
-		Map<String, String> map10 = new HashMap<String, String>();
-		map10.put("qq", "1806540876");
-		map10.put("password", "scnu123456");
-		tencentAccounts.add(map10);
+		tencentAccounts.put("1806540876","scnu123456");
 		
-		availableNum = 9;
-		accountsNum = 9;
+		availableNum = tencentAccounts.size();
+		accountsNum = tencentAccounts.size();
+		try {
+			oa = TencentLogin.gainAccessToken("1838572665", "scnu123456");
+		} catch (Exception e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+		}
+	}
+	static
+	{
+		setTencentAccount();
 	}
 	
 	/**
 	 * 获取腾讯微博账号信息
 	 * 请先调用setTencentAccount()方法
 	 * */
-	public static  ArrayList<Map<String, String>> getTencentAccounts()
+	public static  Map<String, String> getTencentAccounts()
 	{
 		//setTencentAccount();
 		return tencentAccounts;
 	}
 	
 	
-	public void setAvailableNUm(int AvailableNum)
-	{
-		availableNum = AvailableNum;
-	}
 	public  int getAvailableNum()
 	{
 		return availableNum;
@@ -97,6 +82,15 @@ public class TencentAccount {
 	public  void main(String[] args) {
 		// TODO Auto-generated method stub
 
+	}
+
+
+	/**
+	 * 返回腾讯微博认证参数实体类。
+	 * @return oa 腾讯微博认证参数实体类
+	 */
+	public static OAuthV2 getOa() {
+		return oa;
 	}
 
 }
