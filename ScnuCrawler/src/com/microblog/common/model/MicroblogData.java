@@ -22,7 +22,7 @@ public abstract class MicroblogData {
 	/**
 	 * 微博创建时间（新浪微博中的created_at字段、腾讯微博中的data.info.timestamp字段）。
 	 */
-	private long creatTime = 0;
+	private long createTime = 0;
 	/**
 	 * 抓取这条微博的本机时间。
 	 */
@@ -157,9 +157,9 @@ public abstract class MicroblogData {
 	 * 设置本微博的发布时间。
 	 * @param creatTime 本微博的发布时间
 	 */
-	public void setCreatTime(long creatTime)
+	public void setCreatTime(long createTime)
 	{
-		this.creatTime = creatTime;
+		this.createTime = createTime;
 	}
 	/**
 	 * 返回本微博的发布时间。
@@ -167,7 +167,7 @@ public abstract class MicroblogData {
 	 */
 	public long getCreatTime()
 	{
-		return creatTime;
+		return createTime;
 	}
 	
 	/**

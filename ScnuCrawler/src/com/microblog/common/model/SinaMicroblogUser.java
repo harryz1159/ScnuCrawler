@@ -241,9 +241,9 @@ public class SinaMicroblogUser extends MicroblogUser {
 			return null;
 		}
 		/**
-		 * 将新浪微博Status类转化为SinaMicroblogData类。
-		 * @param status 新浪微博Status类。
-		 * @return SinaMicroblogData类。
+		 * 将新浪微博Status对象转化为SinaMicroblogData对象。
+		 * @param status 新浪微博Status对象。
+		 * @return SinaMicroblogData对象。
 		 */
 		private SinaMicroblogData Status2MicroblogData(Status status)
 		{

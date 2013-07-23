@@ -5,8 +5,10 @@ package com.microblog.common.model;
 
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.apache.commons.httpclient.ConnectTimeoutException;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -157,6 +159,73 @@ public class TencentMicroblogUser extends MicroblogUser {
 			System.out.println("正准备获取" + getKey() + "的微博内容。。。");
 			StatusesAPI statusesAPI = new StatusesAPI(TencentAccount.getOa().getOauthVersion());
 			ArrayList<TencentMicroblogData>  statusesList  = new ArrayList<TencentMicroblogData>();
+			int statusesPageCount=(int) Math.ceil(((double)getStatusesCount())/statusesPerPage);
+			for(int i=1;i<=statusesPageCount;i++)
+			{
+				for(int tryTimes=0;tryTimes<3;tryTimes++)
+				{
+					String statusesJsonString=statusesAPI.userTimeline(TencentAccount.getOa(), "json", pageFlag, pageTime, Integer.toString(statusesPerPage), lastId, getKey(), "", "3", "0");
+					JSONObject statusesJsonObj = new JSONObject(statusesJsonString);
+					JSONArray statusesJsonArray = new JSONArray(statusesJsonObj.getJSONObject("data").getString("info"));
+					for(int j=0;j<statusesJsonArray.length();j++)
+					{
+						JSONObject statusJsonObj=statusesJsonArray.getJSONObject(j);
+						try {
+							long createTime=statusJsonObj.getLong("timestamp")*1000;
+							if(isFirstTime)
+							{
+								firstStatusCreateTime=createTime;
+								pageFlag="1";
+								isFirstTime=false;
+							}
+							if(createTime-getSinceCreateTime() <= 0)
+							{
+								System.out.println("本页内容已经在上次运行时抓取过，本页及以后的数据不再重复抓取。");
+								System.out.println("本次获取" + weiboCount + "条微博内容。");
+								if (firstStatusCreateTime-getSinceCreateTime()>0)
+									setSinceCreateTime(firstStatusCreateTime);
+								setSinceCollectTime(new Date().getTime());
+								statusesAPI.shutdownConnection();	
+								return statusesList;
+							}
+						} catch (JSONException e1) {
+							// TODO 自动生成的 catch 块
+							e1.printStackTrace();
+							System.err.println("发现一个无timestamp的JSONObject对象：");
+							System.err.println(statusJsonObj);
+						}
+						try {
+							TencentMicroblogData mdata=Status2MicroblogData(statusJsonObj);
+							System.out.println(mdata.getText());
+							statusesList.add(mdata);
+							weiboCount++;
+							if(j == statusesJsonArray.length() - 1)
+							{
+								lastId=mdata.getMicroblogID();
+								try {
+									pageTime = statusJsonObj.getString("timestamp");
+								} catch (JSONException e) {
+									// TODO 自动生成的 catch 块
+									e.printStackTrace();
+									System.err.println("解析"+getKey()+"第"+i+"页微博的最后一条微博时无法获取微博创建时间，后续分页微博可能会错乱，因而本页之后的数据将不再抓取！");
+									System.out.println("本次获取" + weiboCount + "条微博内容。");
+									if (firstStatusCreateTime-getSinceCreateTime()>0)
+										setSinceCreateTime(firstStatusCreateTime);
+									setSinceCollectTime(new Date().getTime());
+									statusesAPI.shutdownConnection();	
+									return statusesList;
+								}
+							}
+						} catch (JSONException e) {
+							// TODO 自动生成的 catch 块
+							e.printStackTrace();
+							System.err.println("发现一个无id的JSONObject对象，将跳过该statusJsonObj：");
+							System.err.println(statusJsonObj);
+							continue;
+						}
+					}
+				}
+			}
 			return null;
 		}
 
@@ -170,6 +239,46 @@ public class TencentMicroblogUser extends MicroblogUser {
 		public String[] getUserIdolsList() {
 			// TODO 自动生成的方法存根
 			return null;
+		}
+		/**
+		 * 将代表某条微博的JSONObject对象转换成TencentMicroblogData对象。
+		 * @param statusJsonObj 需要转换为TencentMicroblogData的JSONObject对象。
+		 * @return TencentMicroblogData对象。
+		 * @throws JSONException 如果JSONObject对象中缺乏微博ID信息。
+		 */
+		private TencentMicroblogData Status2MicroblogData(JSONObject statusJsonObj) throws JSONException
+		{
+			TencentMicroblogData mdata = new TencentMicroblogData();
+			mdata.setMicroblogID(statusJsonObj.getString("id"));
+			try {
+				mdata.setText(statusJsonObj.getString("text"));
+				mdata.setPicSrc(statusJsonObj.getString("image"));
+				mdata.setUser(TencentMicroblogUser.this);
+				long createTime =statusJsonObj.getLong("timestamp")*1000;
+				mdata.setCreatTime(createTime);
+				mdata.setCollectTime(new Date().getTime());
+				mdata.setRepostsCount(statusJsonObj.getInt("count"));
+				mdata.setCommentsCount(statusJsonObj.getInt("mcount"));
+				mdata.setType(statusJsonObj.getString("type"));
+			} catch (JSONException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+				System.err.println(mdata.getMicroblogID()+"的微博信息不完整！");
+			}
+			String sourceTweeterString = null;
+			try {
+				sourceTweeterString=statusJsonObj.getString("source");
+				if(sourceTweeterString != null && !sourceTweeterString.equalsIgnoreCase("null"))
+				{
+					JSONObject sourceTweeterJsonObj = new JSONObject(sourceTweeterString);
+					mdata.setSource(Status2MicroblogData(sourceTweeterJsonObj));
+				}
+			} catch (JSONException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+				System.err.println("处理"+mdata.getMicroblogID()+"的原微博信息异常，可能该微博为原创微博！");
+			}
+			return mdata;
 		}
 		
 	}
