@@ -164,65 +164,78 @@ public class TencentMicroblogUser extends MicroblogUser {
 			{
 				for(int tryTimes=0;tryTimes<3;tryTimes++)
 				{
-					String statusesJsonString=statusesAPI.userTimeline(TencentAccount.getOa(), "json", pageFlag, pageTime, Integer.toString(statusesPerPage), lastId, getKey(), "", "3", "0");
-					JSONObject statusesJsonObj = new JSONObject(statusesJsonString);
-					JSONArray statusesJsonArray = new JSONArray(statusesJsonObj.getJSONObject("data").getString("info"));
-					for(int j=0;j<statusesJsonArray.length();j++)
-					{
-						JSONObject statusJsonObj=statusesJsonArray.getJSONObject(j);
-						try {
-							long createTime=statusJsonObj.getLong("timestamp")*1000;
-							if(isFirstTime)
-							{
-								firstStatusCreateTime=createTime;
-								pageFlag="1";
-								isFirstTime=false;
-							}
-							if(createTime-getSinceCreateTime() <= 0)
-							{
-								System.out.println("本页内容已经在上次运行时抓取过，本页及以后的数据不再重复抓取。");
-								System.out.println("本次获取" + weiboCount + "条微博内容。");
-								if (firstStatusCreateTime-getSinceCreateTime()>0)
-									setSinceCreateTime(firstStatusCreateTime);
-								setSinceCollectTime(new Date().getTime());
-								statusesAPI.shutdownConnection();	
-								return statusesList;
-							}
-						} catch (JSONException e1) {
-							// TODO 自动生成的 catch 块
-							e1.printStackTrace();
-							System.err.println("发现一个无timestamp的JSONObject对象：");
-							System.err.println(statusJsonObj);
-						}
-						try {
-							TencentMicroblogData mdata=Status2MicroblogData(statusJsonObj);
-							System.out.println(mdata.getText());
-							statusesList.add(mdata);
-							weiboCount++;
-							if(j == statusesJsonArray.length() - 1)
-							{
-								lastId=mdata.getMicroblogID();
+					try {
+						String statusesJsonString = statusesAPI.userTimeline(TencentAccount.getOa(), "json", pageFlag,pageTime, Integer.toString(statusesPerPage),lastId, getKey(), "", "3", "0");
+						JSONObject statusesJsonObj = new JSONObject(statusesJsonString);
+						JSONArray statusesJsonArray = new JSONArray(statusesJsonObj.getJSONObject("data").getString("info"));
+						for (int j = 0; j < statusesJsonArray.length(); j++)
+						{
+							try {
+								JSONObject statusJsonObj = statusesJsonArray.getJSONObject(j);
 								try {
-									pageTime = statusJsonObj.getString("timestamp");
+									long createTime = statusJsonObj.getLong("timestamp") * 1000;
+									if (isFirstTime) {
+										firstStatusCreateTime = createTime;
+										pageFlag = "1";
+										isFirstTime = false;
+									}
+									if (createTime - getSinceCreateTime() <= 0) {
+										System.out.println("本页内容已经在上次运行时抓取过，本页及以后的数据不再重复抓取。");
+										System.out.println("本次获取" + weiboCount+ "条微博内容。");
+										if (firstStatusCreateTime- getSinceCreateTime() > 0)
+											setSinceCreateTime(firstStatusCreateTime);
+										setSinceCollectTime(new Date().getTime());
+										statusesAPI.shutdownConnection();
+										return statusesList;
+									}
+								} catch (JSONException e1) {
+									// TODO 自动生成的 catch 块
+									e1.printStackTrace();
+									System.err
+											.println("发现一个无timestamp的JSONObject对象：");
+									System.err.println(statusJsonObj);
+								}
+								try {
+									TencentMicroblogData mdata = Status2MicroblogData(statusJsonObj);
+									System.out.println(mdata.getText());
+									statusesList.add(mdata);
+									weiboCount++;
+									if (j == statusesJsonArray.length() - 1) {
+										lastId = mdata.getMicroblogID();
+										try {
+											pageTime = statusJsonObj
+													.getString("timestamp");
+										} catch (JSONException e) {
+											// TODO 自动生成的 catch 块
+											e.printStackTrace();
+											System.err.println("解析"+ getKey()+ "第"+ i+ "页微博的最后一条微博时无法获取微博创建时间，后续分页微博可能会错乱，因而本页之后的数据将不再抓取！");
+											System.out.println("本次获取" + weiboCount+ "条微博内容。");
+											if (firstStatusCreateTime- getSinceCreateTime() > 0)
+												setSinceCreateTime(firstStatusCreateTime);
+											setSinceCollectTime(new Date().getTime());
+											statusesAPI.shutdownConnection();
+											return statusesList;
+										}
+									}
 								} catch (JSONException e) {
 									// TODO 自动生成的 catch 块
 									e.printStackTrace();
-									System.err.println("解析"+getKey()+"第"+i+"页微博的最后一条微博时无法获取微博创建时间，后续分页微博可能会错乱，因而本页之后的数据将不再抓取！");
-									System.out.println("本次获取" + weiboCount + "条微博内容。");
-									if (firstStatusCreateTime-getSinceCreateTime()>0)
-										setSinceCreateTime(firstStatusCreateTime);
-									setSinceCollectTime(new Date().getTime());
-									statusesAPI.shutdownConnection();	
-									return statusesList;
+									System.err.println("发现一个无id的JSONObject对象，将跳过该statusJsonObj：");
+									System.err.println(statusJsonObj);
+									continue;
 								}
+							} catch (JSONException e) {
+								// TODO 自动生成的 catch 块
+								e.printStackTrace();
+								System.err.println("解析第"+i+"页第"+(j+1)+"条微博出现异常，将跳过该statusJsonObj。");
+								continue;
 							}
-						} catch (JSONException e) {
-							// TODO 自动生成的 catch 块
-							e.printStackTrace();
-							System.err.println("发现一个无id的JSONObject对象，将跳过该statusJsonObj：");
-							System.err.println(statusJsonObj);
-							continue;
 						}
+						break;
+					} catch (SocketTimeoutException | ConnectTimeoutException  e) {
+						// TODO: handle exception
+						e.printStackTrace();
+						System.out.println("获取本页微博内容超时。。。\n将重试。。。");
 					}
 				}
 			}
