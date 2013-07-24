@@ -365,57 +365,6 @@ public class TencentCrawler {
 	
 	/**
 	 * 指定用户偶像列表
-	 */
-	private static ArrayList<String> getUserIdolListByName(String name) throws Exception
-	{//	
-	    /*
-	     * 获得指定用户的信息
-	     */
-	    UserAPI userAPI = new UserAPI(oAuth.getOauthVersion());
-	    String userJson = userAPI.otherInfo(oAuth, "json", name, "");
-	    JSONObject userObj = new JSONObject(userJson);
-	    	
-	    /*
-	     * 获得指定用户的偶像信息
-	     */
-	    FriendsAPI friendsAPI = new FriendsAPI(oAuth.getOauthVersion());
-	    ArrayList<String> idolNameList = new ArrayList<String>();
-	    System.out.println("总共有" + userObj.getJSONObject("data").getInt("idolnum") + "个偶像。");
-	    Thread.sleep(5*1000);
-	    int idolNum = 0;
-	    int IdolPageCounts = 30;			//翻页粉丝数,最多每页30个
-	    for(int i = 0; i < userObj.getJSONObject("data").getInt("idolnum")/IdolPageCounts +1; ++i)
-	    {
-	    	String userIdols = friendsAPI.userIdollist(oAuth, "json", "30", Integer.toString(IdolPageCounts * i), name, "", "0");
-			++apiTimes;
-			Thread.sleep(3600 + delta);			//控制接口调用频率，大约3.6秒
-			JSONObject userIdolsListObj = new JSONObject(userIdols);	
-		    try
-		    {
-		    	JSONArray userIdolsListInfo = new JSONArray(userIdolsListObj.getJSONObject("data").getString("info"));
-				JSONObject userIdolsItem;
-				for(int j = 0; j < userIdolsListInfo.length(); ++j)
-				{
-					userIdolsItem = (JSONObject)userIdolsListInfo.get(j);
-				    idolNameList.add(userIdolsItem.getString("name"));
-				    System.out.println(idolNameList.get(j + IdolPageCounts*i));
-				    ++idolNum;
-				}
-		    } catch(Exception e)
-		    {
-		    	System.out.println("服务器没有返回更多偶像列表。");
-		    	break;			//腾讯微博获取偶像有个数限制，最多大约9000个
-		    }			
-	    }
-	    System.out.println("共调用API" + apiTimes + "次。" );
-	    System.out.println("共获取偶像id" + idolNum + "个。");
-		friendsAPI.shutdownConnection();			//关闭连接
-		userAPI.shutdownConnection();			//关闭连接
-		return idolNameList;
-	}
-	
-	/**
-	 * 指定用户偶像列表
 	 * 该方法调用FriendsAPI，已做延时处理
 	 */
 	public static ArrayList<String> getUserIdolsList(MicroblogUser user) throws Exception
@@ -527,56 +476,6 @@ public class TencentCrawler {
 		}
 		System.out.println("用户信息保存完成！");
 		return idolsList;
-	}
-	
-	/**
-	 * 指定用户粉丝列表
-	 */
-	private static ArrayList<String> getUserFansListByName(String name) throws Exception
-	{//
-	    UserAPI userAPI = new UserAPI(oAuth.getOauthVersion());
-	    String Userjson = userAPI.otherInfo(oAuth, "json", name, "");			//此处调用了user读接口
-	    JSONObject Userobj = new JSONObject(Userjson);
-	    	
-	    /*
-	     * 获得指定用户的粉丝信息
-	     */
-	    FriendsAPI friendsAPI = new FriendsAPI(oAuth.getOauthVersion());
-	    ArrayList<String> fansNameList = new ArrayList<String>();
-	    System.out.println("大约有" + Userobj.getJSONObject("data").getInt("fansnum") + "个粉丝。");
-	    Thread.sleep(5*1000);
-	    	
-	    int fansNum = 0;
-	    int FansPageCounts = 30;			//翻页粉丝数,最多每页30个
-	    	
-	    for(int i = 0; i < Userobj.getJSONObject("data").getInt("fansnum")/FansPageCounts +1; ++i)
-	    {
-	    	String userFans = friendsAPI.userFanslist(oAuth, "json", "30", Integer.toString(FansPageCounts * i), name, "", "1", "0");			//此处调用了某个读接口
-			++apiTimes;
-			Thread.sleep(3600 + delta);			//控制接口调用频率，大约3.6秒
-			JSONObject userFansListObj = new JSONObject(userFans);	 
-			try
-			{
-				JSONArray userFansListInfo = new JSONArray(userFansListObj.getJSONObject("data").getString("info")); 		//当info为null时抛出异常
-				JSONObject userFansItem;
-				for(int j = 0; j < userFansListInfo.length(); ++j)
-				{
-					userFansItem = (JSONObject)userFansListInfo.get(j);
-				    fansNameList.add(userFansItem.getString("name"));
-				    System.out.println(fansNameList.get(j + FansPageCounts*i));
-				    ++fansNum;
-				}
-		    } catch(Exception e)
-		    {//id为jianwangkeji11的账号显示粉丝数有21万以上，但是用腾讯提供的api只能查找到9000多个
-		    	System.out.println("服务器没有返回更多粉丝列表。");
-		    	break;
-		    }
-	    }
-		System.out.println("共调用API" + apiTimes + "次。" );
-		System.out.println("共获取粉丝id" + fansNum + "个。");
-	    friendsAPI.shutdownConnection();			//关闭连接
-	    userAPI.shutdownConnection();			//关闭连接
-	    return fansNameList;
 	}
 	
 	/**

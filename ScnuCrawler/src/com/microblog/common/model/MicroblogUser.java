@@ -22,62 +22,87 @@ public abstract class MicroblogUser implements java.io.Serializable{
 	private boolean toBeView=false;
 	
 	/**
-	 * 用户唯一标识（新浪微博用户信息的id字段、腾讯微博用户信息的name字段）
+	 * 用户唯一标识（新浪微博用户信息的id字段、腾讯微博用户信息的name字段）。
 	 */
 	private String key = ""; 
 	/**
-	 * 省份编码（参考省份编码表） (从抓取的数据分析，这个数值应该是String)
+	 * 省份编码（参考省份编码表） (从抓取的数据分析，这个数值应该是String)。
 	 */
 	private String province = "";
 	/**
-	 * 性别,m--男，f--女,n--未知
+	 * 性别,m--男，f--女,n--未知。
 	 */
 	private String gender = ""; 
 	/**
-	 * 粉丝数（对应followers_count、fansnum）
+	 * 粉丝数（对应followers_count、fansnum）。
 	 */
 	private int fansCount = -1;
 	/**
-	 * 关注数(对应friends_count、idolnum)
+	 * 关注数(对应friends_count、idolnum)。
 	 */
 	private int idolsCount = -1;
 	/**
-	 * 微博数（对应statuses_count、tweetnum）
+	 * 微博数（对应statuses_count、tweetnum）。
 	 */
 	private int statusesCount = -1;
 	//private Date createdAt = null;               //创建时间  暂不支持
 	//private String lang = "";                  //用户语言版本  暂不支持
 	/**
-	 * 上次抓取的该用户第一条微博创建时间
+	 * 抓取用户微博时所抓到的第一条微博的创建时间。
 	 */
 	private long sinceCreateTime = 0;
 	/**
-	 * 上次抓取该用户微博数据完毕时的时间
+	 * 抓取该用户微博数据完毕时的时间。
 	 */
 	private long sinceCollectTime = 0;
 
 	
+	/**
+	 * 设置抓取微博数据完毕时的本地时间。
+	 * @param sinceCollectTime 抓取微博数据完毕时的本地时间。
+	 */
 	public void setSinceCollectTime(long sinceCollectTime)
 	{
 		this.sinceCollectTime = sinceCollectTime;
 	}
 	
+	/**
+	 * 设置抓取用户微博时所抓到的第一条微博的创建时间。
+	 * @param sinceCreateTime 抓取用户微博时所抓到的第一条微博的创建时间。
+	 */
 	public void setSinceCreateTime(long sinceCreateTime)
 	{
 		this.sinceCreateTime = sinceCreateTime;
 	}
+	/**
+	 * 设置用户省份编码（参考省份编码表）。
+	 * @param province 省份编码。
+	 */
 	public void setProvince(String province) {
 		this.province = province;
 	}
+	/**
+	 * 设置用户性别。,m--男，f--女,n--未知。
+	 * @param gender 用户性别。
+	 */
 	public void setGender(String gender) {
 		this.gender = gender;
 	}
+	/**设置用户关注数。
+	 * @param idolsCount 用户关注数。
+	 */
 	public void setIdolsCount(int idolsCount) {
 		this.idolsCount = idolsCount;
 	}
+	/**设置用户粉丝数。
+	 * @param fansCount 用户粉丝数。
+	 */
 	public void setFansCount(int fansCount) {
 		this.fansCount = fansCount;
 	}
+	/**设置用户微博数。
+	 * @param statusesCount 用户微博数。
+	 */
 	public void setStatusesCount(int statusesCount) {
 		this.statusesCount = statusesCount;
 	}
@@ -85,32 +110,60 @@ public abstract class MicroblogUser implements java.io.Serializable{
 	//	this.createdAt = createdAt;
 	//}
 	
+	/**
+	 * 返回抓取该用户微博数据完毕时的时间。
+	 * @return 抓取该用户微博数据完毕时的时间。
+	 */
 	public long getSinceCollectTime()
 	{
 		return sinceCollectTime;
 	}
 	
+	/**
+	 * 返回抓取用户微博时所抓到的第一条微博的创建时间。
+	 * @return 抓取用户微博时所抓到的第一条微博的创建时间。
+	 */
 	public long getSinceCreateTime()
 	{
 		return sinceCreateTime;
 	}
 
+	/**
+	 * 返回用户的省份编码。（参考省份编码表）
+	 * @return 省份编码。
+	 */
 	public String getProvince() {
 		return province;
 	}
 
+	/**
+	 * 返回用户性别，m--男，f--女，n--未知。
+	 * @return 用户性别。
+	 */
 	public String getGender() {
 		return gender;
 	}
 
+	/**
+	 * 返回用户粉丝数。
+	 * @return 用户粉丝数。
+	 */
 	public int getFansCount() {
 		return fansCount;
 	}
 
+	/**
+	 * 返回用户关注数。
+	 * @return 用户关注数。
+	 */
 	public int getIdolsCount() {
 		return idolsCount;
 	}
 
+	/**
+	 * 返回用户微博数。
+	 * @return 用户微博数。
+	 */
 	public int getStatusesCount() {
 		return statusesCount;
 	}
