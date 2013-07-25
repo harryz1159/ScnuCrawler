@@ -28,7 +28,6 @@ import com.microblog.common.dao.impl.hbase.UserListDaoImpl;
 import com.tencent.weibo.api.*;
 
 public class TencentCrawler {
-	private static final int rateLimitOfSingleAccount = 1000; //单用户每小时的调用次数限制（暂时找不到从服务器获取这个值的方法，因此手动指定）
 	//private static int remaining_hits = rateLimitOfSingleAccount; //剩余调用次数
 	private static final int delta = 0; //用以调节调用频率，暂时根据经验设一个值，腾讯服务器所记录的剩余调用次数可能小于1000
 	private static OAuthV2 oAuth/*=new OAuthV2()*/;
@@ -535,7 +534,7 @@ public class TencentCrawler {
 			{//获取不到json则跳出本次循环，主要是针对跳过本页内容的操作
 				continue;
 			}
-			JSONObject userFansListObj = new JSONObject(userFans);	
+			JSONObject userFansListObj = new JSONObject(userFans);
 		    try
 		    {
 		    	JSONArray userFansListInfo = new JSONArray(userFansListObj.getJSONObject("data").getString("info"));

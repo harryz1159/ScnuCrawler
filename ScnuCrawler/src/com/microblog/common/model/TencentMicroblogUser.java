@@ -14,6 +14,7 @@ import org.json.JSONObject;
 
 import com.microblog.common.accounts.manager.TencentAccount;
 import com.scnu.crawler.util.web.WebInterface;
+import com.tencent.weibo.api.FriendsAPI;
 import com.tencent.weibo.api.StatusesAPI;
 import com.tencent.weibo.api.UserAPI;
 
@@ -233,6 +234,12 @@ public class TencentMicroblogUser extends MicroblogUser {
 							// TODO: handle exception
 							e.printStackTrace();
 							System.out.println("获取本页微博内容超时。。。\n将重试。。。");
+							try {
+								Thread.sleep(3600);
+							} catch ( InterruptedException e1) {
+								// TODO 自动生成的 catch 块
+								e1.printStackTrace();
+							}
 						}
 					}
 				}
@@ -255,7 +262,20 @@ public class TencentMicroblogUser extends MicroblogUser {
 
 		@Override
 		public String[] getUserFansList() {
-			// TODO 自动生成的方法存根
+			FriendsAPI friendsAPI = new FriendsAPI(TencentAccount.getOa().getOauthVersion());
+			ArrayList<String> fansNameList = new ArrayList<String>();
+			int fansNum = 0;
+			int fansPerPage = 30;
+			int fansPageCount=(int) Math.ceil(((double)getStatusesCount())/fansPerPage);
+			for(int i=1;i<fansPageCount;i++)
+			{
+				for(int tryTimes=0;tryTimes<3;tryTimes++)
+				{
+					String fansListJsonString=friendsAPI.userFanslist(TencentAccount.getOa(), "json", fansPerPage, fansPerPage*(i-1), getKey(), "", "1", "0");
+					JSONObject fansListJsonObj = new JSONObject(fansListJsonString);
+					JSONArray fansJsonArray = new JSONArray(fansListJsonObj.getJSONObject("data").getString("info"));
+				}
+			}
 			return null;
 		}
 
