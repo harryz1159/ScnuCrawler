@@ -6,6 +6,7 @@ package com.microblog.common.model;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 
 import org.apache.commons.httpclient.ConnectTimeoutException;
 import org.json.JSONArray;
@@ -233,7 +234,7 @@ public class TencentMicroblogUser extends MicroblogUser {
 						} catch (SocketTimeoutException | ConnectTimeoutException  e) {
 							// TODO: handle exception
 							e.printStackTrace();
-							System.out.println("获取本页微博内容超时。。。\n将重试。。。");
+							System.err.println("获取本页微博内容超时。。。\n将重试。。。");
 							try {
 								Thread.sleep(3600);
 							} catch ( InterruptedException e1) {
@@ -263,20 +264,72 @@ public class TencentMicroblogUser extends MicroblogUser {
 		@Override
 		public String[] getUserFansList() {
 			FriendsAPI friendsAPI = new FriendsAPI(TencentAccount.getOa().getOauthVersion());
-			ArrayList<String> fansNameList = new ArrayList<String>();
-			int fansNum = 0;
+			HashSet<String> fansNameList = new HashSet<String>();
 			int fansPerPage = 30;
 			int fansPageCount=(int) Math.ceil(((double)getStatusesCount())/fansPerPage);
 			for(int i=1;i<fansPageCount;i++)
 			{
-				for(int tryTimes=0;tryTimes<3;tryTimes++)
-				{
-					String fansListJsonString=friendsAPI.userFanslist(TencentAccount.getOa(), "json", fansPerPage, fansPerPage*(i-1), getKey(), "", "1", "0");
-					JSONObject fansListJsonObj = new JSONObject(fansListJsonString);
-					JSONArray fansJsonArray = new JSONArray(fansListJsonObj.getJSONObject("data").getString("info"));
+				try {
+					for(int tryTimes=0;tryTimes<3;tryTimes++)
+					{
+						try {
+							String fansListJsonString = friendsAPI.userFanslist(TencentAccount.getOa(), "json",Integer.toString(fansPerPage),Integer.toString(fansPerPage * (i - 1)),	getKey(), "", "1", "0");
+							JSONObject fansListJsonObj = new JSONObject(fansListJsonString);
+							JSONArray fansJsonArray = new JSONArray(fansListJsonObj	.getJSONObject("data").getString("info"));
+							for (int j = 0; j < fansJsonArray.length(); j++)
+							{
+								try {
+									JSONObject fanJsonObj = fansJsonArray	.getJSONObject(j);
+									try {
+										String fanName = fanJsonObj.getString("name");
+										if (fanName != null)
+											if (fansNameList.add(fanName)) {
+											}
+									} catch (JSONException e) {
+										// TODO 自动生成的 catch 块
+										e.printStackTrace();
+										System.err.println("发现一个无name的JSONObject对象：");
+										System.err.println(fanJsonObj);
+										System.err.println("将跳过该粉丝。。。");
+										continue;
+									}
+								} catch (JSONException e) {
+									// TODO 自动生成的 catch 块
+									e.printStackTrace();
+									System.err.println("解析第"+i+"页第"+j+"个粉丝时出现异常，将跳过该粉丝。。");
+									continue;
+								}
+							}
+							break;
+						} catch (SocketTimeoutException | ConnectTimeoutException  e) {
+							// TODO: handle exception
+							e.printStackTrace();
+							System.err.println("获取第"+i+"页粉丝列表超时。。。\n将重试。。。");
+							try {
+								Thread.sleep(3600);
+							} catch (InterruptedException e1) {
+								// TODO 自动生成的 catch 块
+								e1.printStackTrace();
+							}
+						}
+					}
+				} catch (JSONException e) {
+					// TODO 自动生成的 catch 块
+					e.printStackTrace();
+					System.err.println("抓取第"+i+"页粉丝时服务器返回非Json格式的应答或返回的应答中并无data、info字段，将跳过该页。。");
+					continue;
+				} catch (Exception e) {
+					// TODO 自动生成的 catch 块
+					e.printStackTrace();
+					System.err.println("抓取第"+i+"页粉丝时发生未定义异常，将跳过该页。。");
+					continue;
 				}
 			}
-			return null;
+			System.out.println("共获得" + fansNameList.size() + "个粉丝。");
+			friendsAPI.shutdownConnection();
+			if(fansNameList.isEmpty())
+				return null;
+			return fansNameList.toArray(new String[0]);
 		}
 
 		@Override
