@@ -334,8 +334,73 @@ public class TencentMicroblogUser extends MicroblogUser {
 
 		@Override
 		public String[] getUserIdolsList() {
-			// TODO 自动生成的方法存根
-			return null;
+			FriendsAPI friendsAPI = new FriendsAPI(TencentAccount.getOa().getOauthVersion());
+			HashSet<String> idolsNameList = new HashSet<String>();
+			int idolsPerPage = 30;
+			int idolsPageCount=(int) Math.ceil(((double)getStatusesCount())/idolsPerPage);
+			for(int i=1;i<idolsPageCount;i++)
+			{
+				try {
+					for(int tryTimes=0;tryTimes<3;tryTimes++)
+					{
+						try {
+							String idolsListJsonString = friendsAPI.userIdollist(TencentAccount.getOa(), "json",Integer.toString(idolsPerPage),Integer.toString(idolsPerPage * (i - 1)),	getKey(), "", "0");
+							JSONObject idolsListJsonObj = new JSONObject(idolsListJsonString);
+							JSONArray idolsJsonArray = new JSONArray(idolsListJsonObj.getJSONObject("data").getString("info"));
+							for (int j = 0; j < idolsJsonArray.length(); j++)
+							{
+								try {
+									JSONObject idolJsonObj = idolsJsonArray.getJSONObject(j);
+									try {
+										String idolName = idolJsonObj.getString("name");
+										if (idolName != null)
+											if (idolsNameList.add(idolName)) {
+											}
+									} catch (JSONException e) {
+										// TODO 自动生成的 catch 块
+										e.printStackTrace();
+										System.err.println("发现一个无name的JSONObject对象：");
+										System.err.println(idolJsonObj);
+										System.err.println("将跳过该关注。。。");
+										continue;
+									}
+								} catch (JSONException e) {
+									// TODO 自动生成的 catch 块
+									e.printStackTrace();
+									System.err.println("解析第"+i+"页第"+j+"个关注时出现异常，将跳过该关注。。");
+									continue;
+								}
+							}
+							break;
+						} catch (SocketTimeoutException | ConnectTimeoutException  e) {
+							// TODO: handle exception
+							e.printStackTrace();
+							System.err.println("获取第"+i+"页关注列表超时。。。\n将重试。。。");
+							try {
+								Thread.sleep(3600);
+							} catch (InterruptedException e1) {
+								// TODO 自动生成的 catch 块
+								e1.printStackTrace();
+							}
+						}
+					}
+				} catch (JSONException e) {
+					// TODO 自动生成的 catch 块
+					e.printStackTrace();
+					System.err.println("抓取第"+i+"页关注时服务器返回非Json格式的应答或返回的应答中并无data、info字段，将跳过该页。。");
+					continue;
+				} catch (Exception e) {
+					// TODO 自动生成的 catch 块
+					e.printStackTrace();
+					System.err.println("抓取第"+i+"页关注时发生未定义异常，将跳过该页。。");
+					continue;
+				}
+			}
+			System.out.println("共获得" + idolsNameList.size() + "个关注。");
+			friendsAPI.shutdownConnection();
+			if(idolsNameList.isEmpty())
+				return null;
+			return idolsNameList.toArray(new String[0]);
 		}
 		/**
 		 * 将代表某条微博的JSONObject对象转换成TencentMicroblogData对象。
