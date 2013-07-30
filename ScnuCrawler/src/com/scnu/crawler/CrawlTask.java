@@ -106,17 +106,6 @@ public class CrawlTask {
 			System.err.println("从命令行读取输入失败，将从配置文件中的起始帐号开始抓取微博数据。");
 			choice="Y";
 		}
-		finally
-		{
-			if (br!=null) {
-				try {
-					br.close();
-				} catch (IOException e) {
-					// TODO 自动生成的 catch 块
-					e.printStackTrace();
-				}
-			}
-		}
 		DaoManager dm=new DaoManager();
 		if(choice.equalsIgnoreCase("Y"))
 		{

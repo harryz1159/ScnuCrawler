@@ -95,7 +95,7 @@ public class TencentMicroblogUser extends MicroblogUser {
 	@Override
 	public WebInterface webInterface() {
 		// TODO 自动生成的方法存根
-		return null;
+		return new TencentWebInterface();
 	}
 	class TencentWebInterface implements WebInterface
 	{

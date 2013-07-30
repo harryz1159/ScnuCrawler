@@ -6,8 +6,7 @@
     <package name="com.microblog.common.model">
         <class
               name="MicroblogUser">
-            <inheritance
-            strategy="complete-table"/>
+            <inheritance strategy="complete-table"/>
             <field
                   name="toBeView"
                   persistence-modifier="persistent"/>
@@ -78,7 +77,7 @@
                   name="picSrc"
                   persistence-modifier="persistent"/>
             <field
-                  name="creatTime"
+                  name="createTime"
                   persistence-modifier="persistent"/>
             <field
                   name="collectTime"
