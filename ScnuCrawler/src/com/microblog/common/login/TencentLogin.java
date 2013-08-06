@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
+import java.util.List;
 import java.util.Scanner;
 
 import org.apache.http.HttpEntity;
@@ -15,6 +16,10 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Node;
 
 import com.tencent.weibo.api.UserAPI;
 import com.tencent.weibo.oauthv2.OAuthV2;
@@ -153,28 +158,26 @@ public class TencentLogin {
 	 * 
 	 * 请求微博开放平台应用 返回登录授权页面，但是如果没有sessionKey的话永远登录不成功 sessionKey
 	 * 发现在返回的页面中一个input标签里放的url中有，所以要取到这个sessionKey 其实直接访问标签中的url就可以跳转
+	 * @throws DocumentException 当模拟登录返回的页面为非XML样式时。
 	 * 
 	 */
-	public static String getUrl() throws ClientProtocolException, IOException
+	public static String getUrl() throws ClientProtocolException, IOException, DocumentException
 	{
 		HttpGet getcode = new HttpGet("https://open.t.qq.com/cgi-bin/oauth2/authorize?client_id="+ oAuth.getClientId()+ "&response_type=code&redirect_uri="
 										+ oAuth.getRedirectUri()+ "&checkStatus=yes&appfrom=&g_tk&checkType=showAuth&state=");
 		HttpResponse response3 = client.execute(getcode);
 		HttpEntity entityqqq = response3.getEntity();
 		String entityxcc = EntityUtils.toString(entityqqq);
-		String form = entityxcc.substring(entityxcc.indexOf("<form"), entityxcc
-				.indexOf("</form>"));
-		String[] ss = form.split("/>");
-		String input = "";
-		for (int i = 0; i < ss.length; i++)
+		String html=entityxcc.substring(entityxcc.indexOf("<form"),entityxcc.indexOf("</form>")+7);
+		System.out.println(html);
+		Document document=DocumentHelper.parseText("<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">"+html);
+		List<? extends Node> results=document.selectNodes("//input[@id=u1]/@value");
+		for(Node result:results)
 		{
-			if (ss[i].indexOf("name=\"u1\"") > 0)
-			{
-				input = ss[i];
-			}
-			;
+			if(result.getText().startsWith("https"))
+				return result.getText();
 		}
-		return input.substring(input.indexOf("value=\"") + 7, input.indexOf("\" type=\""));
+		return null;
 	}
 	/**
 	 * 解析并设置Token
@@ -255,10 +258,13 @@ public class TencentLogin {
 	
 	public static void main(String[] args) throws Exception
 	{
-		//init(oAuth);
-		login("", "scnu123456");
-		HttpGet get = new HttpGet(getUrl());
-		setToken(get);
-		getInfo();
+		init();
+		login("1838572665", "scnu123456");
+		if (oAuth.getStatus() == 2) {
+	           System.out.println("Get Authorization Code failed!");
+	          // return;
+	           System.exit(0);
+	       }
+		System.out.println(getUrl());
 	}
 }
