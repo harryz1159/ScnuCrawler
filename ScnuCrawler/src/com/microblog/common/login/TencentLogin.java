@@ -151,7 +151,7 @@ public class TencentLogin {
 		HttpResponse response2 = client.execute(getimg);
 		HttpEntity httpentity = response2.getEntity();
 		String entityxc = EntityUtils.toString(httpentity);
-		System.out.println(entityxc);
+		//System.out.println(entityxc);
 	}
 
 	/**
@@ -169,13 +169,14 @@ public class TencentLogin {
 		HttpEntity entityqqq = response3.getEntity();
 		String entityxcc = EntityUtils.toString(entityqqq);
 		String html=entityxcc.substring(entityxcc.indexOf("<form"),entityxcc.indexOf("</form>")+7);
-		System.out.println(html);
-		Document document=DocumentHelper.parseText("<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">"+html);
-		List<? extends Node> results=document.selectNodes("//input[@id=u1]/@value");
-		for(Node result:results)
+		String inputs[]=html.split("<input");
+		for(String input:inputs)
 		{
-			if(result.getText().startsWith("https"))
-				return result.getText();
+			if(input.indexOf("id=\"u1\"")>0)
+			{
+				int begin=input.indexOf("value=\"") + 7;
+				return input.substring(begin, input.indexOf('"', begin));
+			}
 		}
 		return null;
 	}

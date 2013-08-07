@@ -186,7 +186,10 @@ public class CrawlTask {
 				}
 				ArrayList<? extends MicroblogData> microblogs=witf.getUserStatuses();
 				for(MicroblogData microblog:microblogs)
+				{
+					System.out.println(microblog.getMicroblogID());
 					dm.storeToDataStore(microblog);
+				}
 				String[] fans=witf.getUserFansList();
 				for(String fanKey:fans)
 				{
