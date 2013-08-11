@@ -196,7 +196,7 @@ public class SinaMicroblogUser extends MicroblogUser {
 					SinaAccount.reduceRemainingHits();
 					String[] ids = fm.getFollowersIdsById(getKey(), fansPerPage, 0);
 					System.out.println("共获得" + ids.length + "个粉丝。"); 
-					return ids;
+					return ids.length==0?null:ids;
 				} catch (WeiboException e) {
 					// TODO 自动生成的 catch 块
 					e.printStackTrace();
@@ -224,7 +224,7 @@ public class SinaMicroblogUser extends MicroblogUser {
 					SinaAccount.reduceRemainingHits();
 					String[] ids = fm.getFriendsIdsByUid(getKey(), FriendsPageCount, 0);
 					System.out.println("共获得" + ids.length + "个关注对象。"); 
-					return ids;
+					return ids.length==0?null:ids;
 				} catch (WeiboException e) {
 					// TODO 自动生成的 catch 块
 					e.printStackTrace();

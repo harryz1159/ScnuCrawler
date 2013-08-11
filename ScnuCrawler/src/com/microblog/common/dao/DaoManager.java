@@ -151,7 +151,7 @@ public class DaoManager {
 			q.declareParameters("long currentTime,long min_interval,boolean state");
 			q.getFetchPlan().setFetchSize(FetchPlan.FETCH_SIZE_OPTIMAL);
 			q.addExtension("datanucleus.query.loadResultsAtCommit", "false");
-			result = pm.detachCopyAll((List<T>)q.execute(currentTime, 30 * 60 * 1000, state));
+			result = (List<T>)q.execute(currentTime, 30 * 60 * 1000, state);
 			System.out.println(result.size());
 			tx.commit();
 		} catch (Exception e) {

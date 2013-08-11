@@ -72,7 +72,9 @@
                   primary-key="true"/>
             <field
                   name="text"
-                  persistence-modifier="persistent"/>
+                  persistence-modifier="persistent">
+                <column length="423"/>
+            </field>
             <field
                   name="picSrc"
                   persistence-modifier="persistent"/>

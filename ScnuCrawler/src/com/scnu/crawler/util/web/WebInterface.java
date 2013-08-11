@@ -24,12 +24,12 @@ public interface WebInterface {
 	 */
 	ArrayList<? extends MicroblogData> getUserStatuses();
 	/**
-	 * 返回用户粉丝列表。如果出现异常会返回null。
+	 * 返回用户粉丝列表。如果一个粉丝都获取不到会返回null。
 	 * @return 用户粉丝的唯一标识列表。
 	 */
 	String[] getUserFansList();
 	/**
-	 * 返回用户关注列表。如果出现异常会返回null。
+	 * 返回用户关注列表。如果一个关注都获取不到会返回null。
 	 * @return 用户关注的唯一标识列表。
 	 */
 	String[] getUserIdolsList();

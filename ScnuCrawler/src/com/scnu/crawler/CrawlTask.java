@@ -191,40 +191,42 @@ public class CrawlTask {
 					dm.storeToDataStore(microblog);
 				}
 				String[] fans=witf.getUserFansList();
-				for(String fanKey:fans)
-				{
-					MicroblogUser fan=dm.getUserByKey(fanKey, type);
-					if(fan==null)
-						try {
-							fan=createUser(fanKey);
-						} catch (NoSuchMethodException | SecurityException
-								| InstantiationException
-								| IllegalAccessException
-								| IllegalArgumentException
-								| InvocationTargetException e) {
-							// TODO 自动生成的 catch 块
-							e.printStackTrace();
-							continue;
-						}
-					dm.setUserState(fan, true);
+				if (fans!=null) {
+					for (String fanKey : fans) {
+						MicroblogUser fan = dm.getUserByKey(fanKey, type);
+						if (fan == null)
+							try {
+								fan = createUser(fanKey);
+							} catch (NoSuchMethodException | SecurityException
+									| InstantiationException
+									| IllegalAccessException
+									| IllegalArgumentException
+									| InvocationTargetException e) {
+								// TODO 自动生成的 catch 块
+								e.printStackTrace();
+								continue;
+							}
+						dm.setUserState(fan, true);
+					}
 				}
 				String[] idols=witf.getUserIdolsList();
-				for(String idolKey:idols)
-				{
-					MicroblogUser idol=dm.getUserByKey(idolKey, type);
-					if(idol==null)
-						try {
-							idol=createUser(idolKey);
-						} catch (NoSuchMethodException | SecurityException
-								| InstantiationException
-								| IllegalAccessException
-								| IllegalArgumentException
-								| InvocationTargetException e) {
-							// TODO 自动生成的 catch 块
-							e.printStackTrace();
-							continue;
-						}
-					dm.setUserState(idol, true);
+				if (idols!=null) {
+					for (String idolKey : idols) {
+						MicroblogUser idol = dm.getUserByKey(idolKey, type);
+						if (idol == null)
+							try {
+								idol = createUser(idolKey);
+							} catch (NoSuchMethodException | SecurityException
+									| InstantiationException
+									| IllegalAccessException
+									| IllegalArgumentException
+									| InvocationTargetException e) {
+								// TODO 自动生成的 catch 块
+								e.printStackTrace();
+								continue;
+							}
+						dm.setUserState(idol, true);
+					}
 				}
 				dm.setUserState(user, false);
 				dm.commit();

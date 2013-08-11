@@ -267,7 +267,7 @@ public class TencentMicroblogUser extends MicroblogUser {
 			HashSet<String> fansNameList = new HashSet<String>();
 			int fansPerPage = 30;
 			int fansPageCount=(int) Math.ceil(((double)getStatusesCount())/fansPerPage);
-			for(int i=1;i<fansPageCount;i++)
+			for(int i=1;i<=fansPageCount;i++)
 			{
 				try {
 					for(int tryTimes=0;tryTimes<3;tryTimes++)
@@ -283,8 +283,7 @@ public class TencentMicroblogUser extends MicroblogUser {
 									try {
 										String fanName = fanJsonObj.getString("name");
 										if (fanName != null)
-											if (fansNameList.add(fanName)) {
-											}
+											fansNameList.add(fanName);
 									} catch (JSONException e) {
 										// TODO 自动生成的 catch 块
 										e.printStackTrace();
@@ -338,7 +337,7 @@ public class TencentMicroblogUser extends MicroblogUser {
 			HashSet<String> idolsNameList = new HashSet<String>();
 			int idolsPerPage = 30;
 			int idolsPageCount=(int) Math.ceil(((double)getStatusesCount())/idolsPerPage);
-			for(int i=1;i<idolsPageCount;i++)
+			for(int i=1;i<=idolsPageCount;i++)
 			{
 				try {
 					for(int tryTimes=0;tryTimes<3;tryTimes++)
@@ -354,8 +353,7 @@ public class TencentMicroblogUser extends MicroblogUser {
 									try {
 										String idolName = idolJsonObj.getString("name");
 										if (idolName != null)
-											if (idolsNameList.add(idolName)) {
-											}
+											idolsNameList.add(idolName);
 									} catch (JSONException e) {
 										// TODO 自动生成的 catch 块
 										e.printStackTrace();
