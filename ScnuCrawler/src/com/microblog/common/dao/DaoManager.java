@@ -20,6 +20,7 @@ import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
 
+import com.microblog.common.model.MicroblogData;
 import com.microblog.common.model.MicroblogUser;
 
 /**
@@ -77,6 +78,22 @@ public class DaoManager {
 	{
 		try {
 			return pm.getObjectById(type, key);
+		} catch ( javax.jdo.JDOObjectNotFoundException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+			return null;
+		}
+	}
+	/**
+	 * 通过微博唯一标识获取微博。
+	 * @param id 微博唯一标识
+	 * @param type 微博类型（腾讯or新浪）。
+	 * @return id所对应的微博。
+	 */
+	public <T extends MicroblogData> T getDataById(String id,Class<T> type)
+	{
+		try {
+			return pm.getObjectById(type,id);
 		} catch ( javax.jdo.JDOObjectNotFoundException e) {
 			// TODO 自动生成的 catch 块
 			e.printStackTrace();
