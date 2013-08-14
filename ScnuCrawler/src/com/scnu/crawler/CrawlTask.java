@@ -194,6 +194,13 @@ public class CrawlTask {
 						if(sourceFromDB!=null)
 							microblog.setSource(sourceFromDB);
 					}
+					MicroblogUser createrFromWeb=microblog.getUser();
+					if(createrFromWeb!=null)
+					{
+						MicroblogUser userFromDB=dm.getUserByKey(createrFromWeb.getKey(), createrFromWeb.getClass());
+						if(userFromDB!=null)
+							microblog.setUser(userFromDB);
+					}
 					dm.storeToDataStore(microblog);
 				}
 				String[] fans=witf.getUserFansList();

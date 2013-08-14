@@ -413,7 +413,7 @@ public class TencentMicroblogUser extends MicroblogUser {
 			try {
 				mdata.setText(statusJsonObj.getString("text"));
 				mdata.setPicSrc(statusJsonObj.getString("image"));
-				mdata.setUser(TencentMicroblogUser.this);
+				mdata.setUser(user2MicroblogUser(statusJsonObj));
 				long createTime =statusJsonObj.getLong("timestamp")*1000;
 				mdata.setCreatTime(createTime);
 				mdata.setCollectTime(new Date().getTime());
@@ -428,7 +428,7 @@ public class TencentMicroblogUser extends MicroblogUser {
 			String sourceTweeterString = null;
 			try {
 				sourceTweeterString=statusJsonObj.getString("source");
-				if(sourceTweeterString != null && !sourceTweeterString.equalsIgnoreCase("null"))
+				if(sourceTweeterString != null)
 				{
 					JSONObject sourceTweeterJsonObj = new JSONObject(sourceTweeterString);
 					mdata.setSource(status2MicroblogData(sourceTweeterJsonObj));
@@ -439,6 +439,19 @@ public class TencentMicroblogUser extends MicroblogUser {
 				System.err.println("处理"+mdata.getMicroblogID()+"的原微博信息异常，可能该微博为原创微博！");
 			}
 			return mdata;
+		}
+		private TencentMicroblogUser user2MicroblogUser(JSONObject statusJsonObj) throws JSONException
+		{
+			String name=statusJsonObj.getString("name");
+			TencentMicroblogUser user=null;
+			if(name!=null&&!name.equals("")&&!name.equalsIgnoreCase("null"))
+			{
+				user=new TencentMicroblogUser(name);
+				user.webInterface().updateUserInfo();
+				return user;
+			}
+			else
+				throw new JSONException("返回的微博信息中name字段不正确。");
 		}
 		
 	}
