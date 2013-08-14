@@ -16,11 +16,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Node;
-
 import com.tencent.weibo.api.UserAPI;
 import com.tencent.weibo.oauthv2.OAuthV2;
 import com.tencent.weibo.oauthv2.OAuthV2Client;
@@ -161,7 +156,7 @@ public class TencentLogin {
 	 * @throws DocumentException 当模拟登录返回的页面为非XML样式时。
 	 * 
 	 */
-	public static String getUrl() throws ClientProtocolException, IOException, DocumentException
+	public static String getUrl() throws ClientProtocolException, IOException
 	{
 		HttpGet getcode = new HttpGet("https://open.t.qq.com/cgi-bin/oauth2/authorize?client_id="+ oAuth.getClientId()+ "&response_type=code&redirect_uri="
 										+ oAuth.getRedirectUri()+ "&checkStatus=yes&appfrom=&g_tk&checkType=showAuth&state=");

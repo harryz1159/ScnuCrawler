@@ -73,7 +73,7 @@
             <field
                   name="text"
                   persistence-modifier="persistent">
-                <column length="423"/>
+                <column length="500"/>
             </field>
             <field
                   name="picSrc"

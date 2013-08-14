@@ -195,7 +195,7 @@ public class TencentMicroblogUser extends MicroblogUser {
 										System.err.println(statusJsonObj);
 									}
 									try {
-										TencentMicroblogData mdata = Status2MicroblogData(statusJsonObj);
+										TencentMicroblogData mdata = status2MicroblogData(statusJsonObj);
 										System.out.println(mdata.getText());
 										statusesList.add(mdata);
 										weiboCount++;
@@ -406,7 +406,7 @@ public class TencentMicroblogUser extends MicroblogUser {
 		 * @return TencentMicroblogData对象。
 		 * @throws JSONException 如果JSONObject对象中缺乏微博ID信息。
 		 */
-		private TencentMicroblogData Status2MicroblogData(JSONObject statusJsonObj) throws JSONException
+		private TencentMicroblogData status2MicroblogData(JSONObject statusJsonObj) throws JSONException
 		{
 			TencentMicroblogData mdata = new TencentMicroblogData();
 			mdata.setMicroblogID(statusJsonObj.getString("id"));
@@ -431,7 +431,7 @@ public class TencentMicroblogUser extends MicroblogUser {
 				if(sourceTweeterString != null && !sourceTweeterString.equalsIgnoreCase("null"))
 				{
 					JSONObject sourceTweeterJsonObj = new JSONObject(sourceTweeterString);
-					mdata.setSource(Status2MicroblogData(sourceTweeterJsonObj));
+					mdata.setSource(status2MicroblogData(sourceTweeterJsonObj));
 				}
 			} catch (JSONException e) {
 				// TODO 自动生成的 catch 块

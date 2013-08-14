@@ -66,6 +66,7 @@ public class DaoManager {
 		jdoPro.put("javax.jdo.option.TransactionIsolationLevel", "repeatable-read");
 		jdoPro.put("datanucleus.nontx.atomic", "true");
 		jdoPro.put("datanucleus.query.jdoql.allowAll", "true");
+		jdoPro.put("datanucleus.flush.mode", "AUTO");
 		pmf=JDOHelper.getPersistenceManagerFactory(jdoPro);
 	}
 	/**

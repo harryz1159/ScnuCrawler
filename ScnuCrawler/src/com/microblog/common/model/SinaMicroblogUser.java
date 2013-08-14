@@ -165,7 +165,7 @@ public class SinaMicroblogUser extends MicroblogUser {
 								setSinceCollectTime(new Date().getTime());
 								return statusesList;
 							}
-							SinaMicroblogData mdata = Status2MicroblogData(status);
+							SinaMicroblogData mdata = status2MicroblogData(status);
 							System.out.println(mdata.getText());
 							statusesList.add(mdata);
 							weiboCount++;
@@ -245,7 +245,7 @@ public class SinaMicroblogUser extends MicroblogUser {
 		 * @param status 新浪微博Status对象。
 		 * @return SinaMicroblogData对象。
 		 */
-		private SinaMicroblogData Status2MicroblogData(Status status)
+		private SinaMicroblogData status2MicroblogData(Status status)
 		{
 			//SimpleDateFormat t = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			SinaMicroblogData mdata = new SinaMicroblogData();
@@ -253,7 +253,7 @@ public class SinaMicroblogUser extends MicroblogUser {
 			mdata.setMicroblogID(status.getId());
 			mdata.setText(status.getText());
 			mdata.setPicSrc(status.getOriginalPic());
-			mdata.setUser(SinaMicroblogUser.this);
+			mdata.setUser(user2MicroblogUser(status.getUser()));
 			mdata.setCreatTime(createTime);	 //注意日期的显示格式，关系到数据库里的排序
 			mdata.setCollectTime(new Date().getTime());
 			mdata.setCommentsCount(status.getCommentsCount());
@@ -262,11 +262,28 @@ public class SinaMicroblogUser extends MicroblogUser {
 			if(retweetedStatus!=null)
 			{
 				mdata.setType("2");
-				mdata.setSource(Status2MicroblogData(retweetedStatus));
+				mdata.setSource(status2MicroblogData(retweetedStatus));
 			}
 			else
 				mdata.setType("1");
 			return mdata;
+		}
+		/**
+		 * 将新浪微博User对象转化为SinaMicroblogUser对象。
+		 * @param user 新浪微博User对象。
+		 * @return SinaMicroblogUser对象。
+		 */
+		private SinaMicroblogUser user2MicroblogUser(User user)
+		{
+			SinaMicroblogUser u=new SinaMicroblogUser(user.getId());
+			u.setName(user.getName());
+			u.setScreenName(user.getScreenName());
+			u.setGender(user.getGender());
+			u.setProvince(Integer.toString(user.getProvince()));
+			u.setFansCount(user.getFollowersCount());
+			u.setIdolsCount(user.getFriendsCount());
+			u.setStatusesCount(user.getStatusesCount());
+			return u;
 		}
 	}
 
