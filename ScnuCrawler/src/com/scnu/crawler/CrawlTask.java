@@ -187,19 +187,30 @@ public class CrawlTask {
 				ArrayList<? extends MicroblogData> microblogs=witf.getUserStatuses();
 				for(MicroblogData microblog:microblogs)
 				{
-					MicroblogData sourceFromWeb=microblog.getSource();
-					if(sourceFromWeb!=null)
+					MicroblogData currentBlog=microblog;
+					while (true)
 					{
-						MicroblogData sourceFromDB=dm.getDataById(sourceFromWeb.getMicroblogID(), sourceFromWeb.getClass());
-						if(sourceFromDB!=null)
-							microblog.setSource(sourceFromDB);
-					}
-					MicroblogUser createrFromWeb=microblog.getUser();
-					if(createrFromWeb!=null)
-					{
-						MicroblogUser userFromDB=dm.getUserByKey(createrFromWeb.getKey(), createrFromWeb.getClass());
-						if(userFromDB!=null)
-							microblog.setUser(userFromDB);
+						MicroblogUser createrFromWeb = currentBlog.getUser();
+						if (createrFromWeb != null)
+						{
+							MicroblogUser userFromDB = dm.getUserByKey(createrFromWeb.getKey(),createrFromWeb.getClass());
+							if (userFromDB != null)
+								microblog.setUser(userFromDB);
+						}
+						MicroblogData sourceFromWeb = currentBlog.getSource();
+						if (sourceFromWeb != null)
+						{
+							MicroblogData sourceFromDB = dm.getDataById(	sourceFromWeb.getMicroblogID(),sourceFromWeb.getClass());
+							if (sourceFromDB != null)
+							{
+								microblog.setSource(sourceFromDB);
+								break;
+							}
+							else
+								currentBlog = sourceFromWeb;
+						}
+						else
+							break;
 					}
 					dm.storeToDataStore(microblog);
 				}
