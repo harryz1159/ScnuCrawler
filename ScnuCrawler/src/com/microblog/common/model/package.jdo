@@ -13,7 +13,9 @@
             <field
                   name="key"
                   persistence-modifier="persistent"
-                  primary-key="true"/>
+                  primary-key="true">
+                <column length="190"/>
+            </field>
             <field
                   name="province"
                   persistence-modifier="none"/>
@@ -69,7 +71,9 @@
             <field
                   name="microblogID"
                   persistence-modifier="persistent"
-                  primary-key="true"/>
+                  primary-key="true">
+                <column length="190"/>
+            </field>
             <field
                   name="text"
                   persistence-modifier="persistent">

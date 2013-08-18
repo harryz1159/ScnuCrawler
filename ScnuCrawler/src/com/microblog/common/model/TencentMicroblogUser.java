@@ -190,8 +190,7 @@ public class TencentMicroblogUser extends MicroblogUser {
 									} catch (JSONException e1) {
 										// TODO 自动生成的 catch 块
 										e1.printStackTrace();
-										System.err
-												.println("发现一个无timestamp的JSONObject对象：");
+										System.err.println("发现一个无timestamp的JSONObject对象：");
 										System.err.println(statusJsonObj);
 									}
 									try {
@@ -199,11 +198,11 @@ public class TencentMicroblogUser extends MicroblogUser {
 										System.out.println(mdata.getText());
 										statusesList.add(mdata);
 										weiboCount++;
-										if (j == statusesJsonArray.length() - 1) {
+										if (j == statusesJsonArray.length() - 1)
+										{
 											lastId = mdata.getMicroblogID();
 											try {
-												pageTime = statusJsonObj
-														.getString("timestamp");
+												pageTime = statusJsonObj.getString("timestamp");
 											} catch (JSONException e) {
 												// TODO 自动生成的 catch 块
 												e.printStackTrace();
@@ -219,7 +218,7 @@ public class TencentMicroblogUser extends MicroblogUser {
 									} catch (JSONException e) {
 										// TODO 自动生成的 catch 块
 										e.printStackTrace();
-										System.err.println("发现一个无id的JSONObject对象，将跳过该statusJsonObj：");
+										System.err.println("发现一个无id或name的JSONObject对象，将跳过该statusJsonObj：");
 										System.err.println(statusJsonObj);
 										continue;
 									}
@@ -282,7 +281,7 @@ public class TencentMicroblogUser extends MicroblogUser {
 									JSONObject fanJsonObj = fansJsonArray	.getJSONObject(j);
 									try {
 										String fanName = fanJsonObj.getString("name");
-										if (fanName != null)
+										if (fanName != null&&!fanName.equalsIgnoreCase("null")&&!fanName.equalsIgnoreCase(""))
 											fansNameList.add(fanName);
 									} catch (JSONException e) {
 										// TODO 自动生成的 catch 块
@@ -352,7 +351,7 @@ public class TencentMicroblogUser extends MicroblogUser {
 									JSONObject idolJsonObj = idolsJsonArray.getJSONObject(j);
 									try {
 										String idolName = idolJsonObj.getString("name");
-										if (idolName != null)
+										if (idolName != null&&!idolName.equalsIgnoreCase("null")&&!idolName.equalsIgnoreCase(""))
 											idolsNameList.add(idolName);
 									} catch (JSONException e) {
 										// TODO 自动生成的 catch 块
@@ -404,16 +403,16 @@ public class TencentMicroblogUser extends MicroblogUser {
 		 * 将代表某条微博的JSONObject对象转换成TencentMicroblogData对象。
 		 * @param statusJsonObj 需要转换为TencentMicroblogData的JSONObject对象。
 		 * @return TencentMicroblogData对象。
-		 * @throws JSONException 如果JSONObject对象中缺乏微博ID信息。
+		 * @throws JSONException 如果JSONObject对象中缺乏微博ID信息或作者用户唯一标识。
 		 */
 		private TencentMicroblogData status2MicroblogData(JSONObject statusJsonObj) throws JSONException
 		{
 			TencentMicroblogData mdata = new TencentMicroblogData();
 			mdata.setMicroblogID(statusJsonObj.getString("id"));
+			mdata.setUser(user2MicroblogUser(statusJsonObj));
 			try {
 				mdata.setText(statusJsonObj.getString("text"));
 				mdata.setPicSrc(statusJsonObj.getString("image"));
-				mdata.setUser(user2MicroblogUser(statusJsonObj));
 				long createTime =statusJsonObj.getLong("timestamp")*1000;
 				mdata.setCreatTime(createTime);
 				mdata.setCollectTime(new Date().getTime());

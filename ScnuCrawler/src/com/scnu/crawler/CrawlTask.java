@@ -187,32 +187,33 @@ public class CrawlTask {
 				ArrayList<? extends MicroblogData> microblogs=witf.getUserStatuses();
 				for(MicroblogData microblog:microblogs)
 				{
-					MicroblogData currentBlog=microblog;
-					while (true)
+					if (dm.getDataById(microblog.getMicroblogID(), microblog.getClass())==null)
 					{
-						MicroblogUser createrFromWeb = currentBlog.getUser();
-						if (createrFromWeb != null)
+						MicroblogData currentBlog = microblog;
+						while (true)
 						{
-							MicroblogUser userFromDB = dm.getUserByKey(createrFromWeb.getKey(),createrFromWeb.getClass());
-							if (userFromDB != null)
-								microblog.setUser(userFromDB);
-						}
-						MicroblogData sourceFromWeb = currentBlog.getSource();
-						if (sourceFromWeb != null)
-						{
-							MicroblogData sourceFromDB = dm.getDataById(	sourceFromWeb.getMicroblogID(),sourceFromWeb.getClass());
-							if (sourceFromDB != null)
+							MicroblogUser createrFromWeb = currentBlog.getUser();
+							if (createrFromWeb != null)
 							{
-								microblog.setSource(sourceFromDB);
-								break;
+								MicroblogUser userFromDB = dm.getUserByKey(createrFromWeb.getKey(),createrFromWeb.getClass());
+								if (userFromDB != null)
+									currentBlog.setUser(userFromDB);
 							}
-							else
-								currentBlog = sourceFromWeb;
+							MicroblogData sourceFromWeb = currentBlog.getSource();
+							if (sourceFromWeb != null)
+							{
+								MicroblogData sourceFromDB = dm.getDataById(	sourceFromWeb.getMicroblogID(),sourceFromWeb.getClass());
+								if (sourceFromDB != null)
+								{
+									currentBlog.setSource(sourceFromDB);
+									break;
+								} else
+									currentBlog = sourceFromWeb;
+							} else
+								break;
 						}
-						else
-							break;
+						dm.storeToDataStore(microblog);
 					}
-					dm.storeToDataStore(microblog);
 				}
 				String[] fans=witf.getUserFansList();
 				if (fans!=null) {
