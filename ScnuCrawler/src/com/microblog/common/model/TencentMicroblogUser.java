@@ -411,7 +411,7 @@ public class TencentMicroblogUser extends MicroblogUser {
 			mdata.setMicroblogID(statusJsonObj.getString("id"));
 			mdata.setUser(user2MicroblogUser(statusJsonObj));
 			try {
-				mdata.setText(statusJsonObj.getString("text"));
+				mdata.setText(statusJsonObj.getString("text").replaceAll("<a.*?>", "").replaceAll("</a>", ""));
 				mdata.setPicSrc(statusJsonObj.getString("image"));
 				long createTime =statusJsonObj.getLong("timestamp")*1000;
 				mdata.setCreatTime(createTime);
