@@ -23,7 +23,7 @@ public class TencentAccount {
 	{
 		tencentAccounts.put( "2631804320","scnu123456");
 		
-		tencentAccounts.put("1838572665","1838572665");
+		tencentAccounts.put("1838572665","scnu123456");
 		
 		tencentAccounts.put("2508355919","scnu123456");
 		

@@ -104,9 +104,10 @@ public class TencentMicroblogUser extends MicroblogUser {
 		public boolean updateUserInfo() {
 			UserAPI userAPI = new UserAPI(TencentAccount.getOa().getOauthVersion());
 			int tryTimes=0;
+			String userJson=null;
 			for (tryTimes = 0;  tryTimes< 3; tryTimes++) {
 				try {
-					String userJson = userAPI.otherInfo(TencentAccount.getOa(),"json", getKey(), "");
+					userJson = userAPI.otherInfo(TencentAccount.getOa(),"json", getKey(), "");
 					JSONObject userObj = new JSONObject(userJson);
 					setOpenId(userObj.getJSONObject("data").getString("openid"));
 					setNick(userObj.getJSONObject("data").getString("nick"));
@@ -128,9 +129,15 @@ public class TencentMicroblogUser extends MicroblogUser {
 				} catch (JSONException e) {
 					// TODO 自动生成的 catch 块
 					e.printStackTrace();
-					System.out.println("JSON解析出错，有可能是服务器没有返回" + getKey()
-							+ "的信息。");
+					System.err.println("JSON解析出错，有可能是服务器没有返回" + getKey()+ "的信息。");
+					System.err.println("服务器返回的信息为："+userJson);
 					userAPI.shutdownConnection();
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e1) {
+						// TODO 自动生成的 catch 块
+						e1.printStackTrace();
+					}
 					return false;
 				} catch (Exception e) {
 					// TODO 自动生成的 catch 块
@@ -265,23 +272,27 @@ public class TencentMicroblogUser extends MicroblogUser {
 			FriendsAPI friendsAPI = new FriendsAPI(TencentAccount.getOa().getOauthVersion());
 			HashSet<String> fansNameList = new HashSet<String>();
 			int fansPerPage = 30;
-			int fansPageCount=(int) Math.ceil(((double)getStatusesCount())/fansPerPage);
+			int fansPageCount=(int) Math.ceil(((double)getFansCount())/fansPerPage);
+			String fansListJsonString=null;
 			for(int i=1;i<=fansPageCount;i++)
 			{
 				try {
 					for(int tryTimes=0;tryTimes<3;tryTimes++)
 					{
 						try {
-							String fansListJsonString = friendsAPI.userFanslist(TencentAccount.getOa(), "json",Integer.toString(fansPerPage),Integer.toString(fansPerPage * (i - 1)),	getKey(), "", "1", "0");
+							fansListJsonString = friendsAPI.userFanslist(TencentAccount.getOa(), "json",Integer.toString(fansPerPage),Integer.toString(fansPerPage * (i - 1)),	getKey(), "", "1", "0");
 							JSONObject fansListJsonObj = new JSONObject(fansListJsonString);
-							JSONArray fansJsonArray = new JSONArray(fansListJsonObj	.getJSONObject("data").getString("info"));
+							JSONObject dataJsonObj=fansListJsonObj.getJSONObject("data");
+							if(dataJsonObj.getInt("hasnext")==1)
+								i=fansPageCount;
+							JSONArray fansJsonArray = new JSONArray(dataJsonObj.getString("info"));
 							for (int j = 0; j < fansJsonArray.length(); j++)
 							{
 								try {
-									JSONObject fanJsonObj = fansJsonArray	.getJSONObject(j);
+									JSONObject fanJsonObj = fansJsonArray.getJSONObject(j);
 									try {
 										String fanName = fanJsonObj.getString("name");
-										if (fanName != null&&!fanName.equalsIgnoreCase("null")&&!fanName.equalsIgnoreCase(""))
+										if (fanName != null&& !fanName	.equalsIgnoreCase("null")&& !fanName.equalsIgnoreCase(""))
 											fansNameList.add(fanName);
 									} catch (JSONException e) {
 										// TODO 自动生成的 catch 块
@@ -294,7 +305,7 @@ public class TencentMicroblogUser extends MicroblogUser {
 								} catch (JSONException e) {
 									// TODO 自动生成的 catch 块
 									e.printStackTrace();
-									System.err.println("解析第"+i+"页第"+j+"个粉丝时出现异常，将跳过该粉丝。。");
+									System.err.println("解析第" + i + "页第" + j+ "个粉丝时出现异常，将跳过该粉丝。。");
 									continue;
 								}
 							}
@@ -315,6 +326,13 @@ public class TencentMicroblogUser extends MicroblogUser {
 					// TODO 自动生成的 catch 块
 					e.printStackTrace();
 					System.err.println("抓取第"+i+"页粉丝时服务器返回非Json格式的应答或返回的应答中并无data、info字段，将跳过该页。。");
+					System.err.println("服务器返回的信息为："+fansListJsonString);
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e1) {
+						// TODO 自动生成的 catch 块
+						e1.printStackTrace();
+					}
 					continue;
 				} catch (Exception e) {
 					// TODO 自动生成的 catch 块
@@ -335,15 +353,19 @@ public class TencentMicroblogUser extends MicroblogUser {
 			FriendsAPI friendsAPI = new FriendsAPI(TencentAccount.getOa().getOauthVersion());
 			HashSet<String> idolsNameList = new HashSet<String>();
 			int idolsPerPage = 30;
-			int idolsPageCount=(int) Math.ceil(((double)getStatusesCount())/idolsPerPage);
+			int idolsPageCount=(int) Math.ceil(((double)getIdolsCount())/idolsPerPage);
+			String idolsListJsonString=null;
 			for(int i=1;i<=idolsPageCount;i++)
 			{
 				try {
 					for(int tryTimes=0;tryTimes<3;tryTimes++)
 					{
 						try {
-							String idolsListJsonString = friendsAPI.userIdollist(TencentAccount.getOa(), "json",Integer.toString(idolsPerPage),Integer.toString(idolsPerPage * (i - 1)),	getKey(), "", "0");
+							idolsListJsonString = friendsAPI.userIdollist(TencentAccount.getOa(), "json",Integer.toString(idolsPerPage),Integer.toString(idolsPerPage * (i - 1)),	getKey(), "", "0");
 							JSONObject idolsListJsonObj = new JSONObject(idolsListJsonString);
+							JSONObject dataJsonObj=idolsListJsonObj.getJSONObject("data");
+							if(dataJsonObj.getInt("hasnext")==1)
+								i=idolsPageCount;
 							JSONArray idolsJsonArray = new JSONArray(idolsListJsonObj.getJSONObject("data").getString("info"));
 							for (int j = 0; j < idolsJsonArray.length(); j++)
 							{
@@ -351,7 +373,7 @@ public class TencentMicroblogUser extends MicroblogUser {
 									JSONObject idolJsonObj = idolsJsonArray.getJSONObject(j);
 									try {
 										String idolName = idolJsonObj.getString("name");
-										if (idolName != null&&!idolName.equalsIgnoreCase("null")&&!idolName.equalsIgnoreCase(""))
+										if (idolName != null&& !idolName.equalsIgnoreCase("null")&& !idolName.equalsIgnoreCase(""))
 											idolsNameList.add(idolName);
 									} catch (JSONException e) {
 										// TODO 自动生成的 catch 块
@@ -364,7 +386,7 @@ public class TencentMicroblogUser extends MicroblogUser {
 								} catch (JSONException e) {
 									// TODO 自动生成的 catch 块
 									e.printStackTrace();
-									System.err.println("解析第"+i+"页第"+j+"个关注时出现异常，将跳过该关注。。");
+									System.err.println("解析第" + i + "页第" + j+ "个关注时出现异常，将跳过该关注。。");
 									continue;
 								}
 							}
@@ -385,6 +407,13 @@ public class TencentMicroblogUser extends MicroblogUser {
 					// TODO 自动生成的 catch 块
 					e.printStackTrace();
 					System.err.println("抓取第"+i+"页关注时服务器返回非Json格式的应答或返回的应答中并无data、info字段，将跳过该页。。");
+					System.err.println("服务器返回的信息为："+idolsListJsonString);
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e1) {
+						// TODO 自动生成的 catch 块
+						e1.printStackTrace();
+					}
 					continue;
 				} catch (Exception e) {
 					// TODO 自动生成的 catch 块
@@ -434,7 +463,7 @@ public class TencentMicroblogUser extends MicroblogUser {
 				}
 			} catch (JSONException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				//e.printStackTrace();
 				System.err.println("处理"+mdata.getMicroblogID()+"的原微博信息异常，可能该微博为原创微博！");
 			}
 			return mdata;
@@ -446,8 +475,20 @@ public class TencentMicroblogUser extends MicroblogUser {
 			if(name!=null&&!name.equals("")&&!name.equalsIgnoreCase("null"))
 			{
 				user=new TencentMicroblogUser(name);
-				user.webInterface().updateUserInfo();
-				return user;
+				if(user.equals(TencentMicroblogUser.this))
+					return TencentMicroblogUser.this;
+				else
+				{
+					try {
+						user.setOpenId(statusJsonObj.getString("openid"));
+						user.setNick(statusJsonObj.getString("nick"));
+						user.setProvince(statusJsonObj.getString("province_code"));
+					} catch (JSONException e) {
+						// TODO 自动生成的 catch 块
+						System.err.println(e);
+					}
+					return user;
+				}
 			}
 			else
 				throw new JSONException("返回的微博信息中name字段不正确。");

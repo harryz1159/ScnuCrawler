@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
-import java.util.List;
 import java.util.Scanner;
 
 import org.apache.http.HttpEntity;
@@ -16,7 +15,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import com.tencent.weibo.api.UserAPI;
 import com.tencent.weibo.oauthv2.OAuthV2;
 import com.tencent.weibo.oauthv2.OAuthV2Client;
 
@@ -145,8 +143,7 @@ public class TencentLogin {
 						+ oAuth.getClientId()+ "%26response_type%3Dcode%26redirect_uri="+ oAuth.getRedirectUri()+ "&ptredirect=1&h=1&from_ui=1&dumy=&qlogin_param=abbfew=ddd&wording=%E6%8E%88%E6%9D%83&fp=loginerroralert&action=8-13-240977&g=1&t=1&dummy=&js_type=2&js_ver=10009");
 		HttpResponse response2 = client.execute(getimg);
 		HttpEntity httpentity = response2.getEntity();
-		String entityxc = EntityUtils.toString(httpentity);
-		//System.out.println(entityxc);
+		EntityUtils.toString(httpentity);
 	}
 
 	/**
@@ -213,7 +210,7 @@ public class TencentLogin {
 	{
 		//输出Token，如果拿到了Token就代表登录成功，并可以进行下一步操作。
 		System.out.println("Token="+oAuth.getAccessToken());
-		UserAPI getuser = new UserAPI(oAuth.getOauthVersion());
+		//UserAPI getuser = new UserAPI(oAuth.getOauthVersion());
 		//String userJson = getuser.otherInfo(oAuth, "json", "", oAuth.getOpenid());
 		//JSONObject userJsonObject = JSONObject.fromObject(userJson);
 		//Integer errcode = (Integer) userJsonObject.get("errcode");

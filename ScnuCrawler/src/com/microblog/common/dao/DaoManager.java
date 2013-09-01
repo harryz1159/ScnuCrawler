@@ -7,7 +7,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -81,7 +80,7 @@ public class DaoManager {
 			return pm.getObjectById(type, key);
 		} catch ( javax.jdo.JDOObjectNotFoundException e) {
 			// TODO 自动生成的 catch 块
-			e.printStackTrace();
+			System.err.println(e);
 			return null;
 		}
 	}
@@ -97,7 +96,7 @@ public class DaoManager {
 			return pm.getObjectById(type,id);
 		} catch ( javax.jdo.JDOObjectNotFoundException e) {
 			// TODO 自动生成的 catch 块
-			e.printStackTrace();
+			System.err.println(e);
 			return null;
 		}
 	}
