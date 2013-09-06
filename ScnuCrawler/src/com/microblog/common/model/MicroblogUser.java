@@ -1,5 +1,7 @@
 package com.microblog.common.model;
 
+import java.util.HashSet;
+
 import com.scnu.crawler.util.web.WebInterface;
 
 /**
@@ -55,6 +57,24 @@ public abstract class MicroblogUser implements java.io.Serializable{
 	 * 抓取该用户微博数据完毕时的时间。
 	 */
 	private long sinceCollectTime = 0;
+	/**
+	 * 微博用户粉丝列表。
+	 */
+	private HashSet<MicroblogUser> fans=new HashSet<MicroblogUser>();
+	/**
+	 * 微博用户关注列表。
+	 */
+	private HashSet<MicroblogUser> idols=new HashSet<MicroblogUser>();
+	public void addFan(MicroblogUser fan)
+	{
+		if(fans.add(fan))
+			fan.addIdol(this);
+	}
+	public void addIdol(MicroblogUser idol)
+	{
+		if(idols.add(idol))
+			idol.addFan(this);
+	}
 
 	
 	/**
