@@ -325,7 +325,7 @@ public class TencentMicroblogUser extends MicroblogUser {
 				} catch (JSONException e) {
 					// TODO 自动生成的 catch 块
 					e.printStackTrace();
-					System.err.println("抓取第"+i+"页粉丝时服务器返回非Json格式的应答或返回的应答中并无data、info字段，将跳过该页。。");
+					System.err.println("抓取"+getKey()+"第"+i+"页粉丝时服务器返回非Json格式的应答或返回的应答中并无data、info字段，将跳过该页。。");
 					System.err.println("服务器返回的信息为："+fansListJsonString);
 					try {
 						Thread.sleep(2000);
@@ -406,7 +406,7 @@ public class TencentMicroblogUser extends MicroblogUser {
 				} catch (JSONException e) {
 					// TODO 自动生成的 catch 块
 					e.printStackTrace();
-					System.err.println("抓取第"+i+"页关注时服务器返回非Json格式的应答或返回的应答中并无data、info字段，将跳过该页。。");
+					System.err.println("抓取"+getKey()+"第"+i+"页关注时服务器返回非Json格式的应答或返回的应答中并无data、info字段，将跳过该页。。");
 					System.err.println("服务器返回的信息为："+idolsListJsonString);
 					try {
 						Thread.sleep(2000);
@@ -440,7 +440,7 @@ public class TencentMicroblogUser extends MicroblogUser {
 			mdata.setMicroblogID(statusJsonObj.getString("id"));
 			mdata.setUser(user2MicroblogUser(statusJsonObj));
 			try {
-				mdata.setText(statusJsonObj.getString("text").replaceAll("<a.*?>", "").replaceAll("</a>", ""));
+				mdata.setText(statusJsonObj.getString("text").replaceAll("<a.*?>", "").replaceAll("</a>", "").replaceAll("&gt;", ">").replaceAll("&lt;", "<").replaceAll("&nbsp;", " ").replaceAll("&amp;", "&").replaceAll("&quot;", "\""));
 				mdata.setPicSrc(statusJsonObj.getString("image"));
 				long createTime =statusJsonObj.getLong("timestamp")*1000;
 				mdata.setCreatTime(createTime);
