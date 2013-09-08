@@ -1,7 +1,5 @@
 package com.microblog.common.model;
 
-import java.util.HashSet;
-
 import com.scnu.crawler.util.web.WebInterface;
 
 /**
