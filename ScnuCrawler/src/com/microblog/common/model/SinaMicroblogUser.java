@@ -5,6 +5,7 @@ package com.microblog.common.model;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 
 import weibo4j.Friendships;
 import weibo4j.Timeline;
@@ -42,24 +43,36 @@ public class SinaMicroblogUser extends MicroblogUser {
 	 */
 	private String screenName="";
 	/**
+	 * 微博用户粉丝列表。
+	 */
+	private HashSet<SinaMicroblogUser> fans=new HashSet<SinaMicroblogUser>();
+	/**
+	 * 微博用户关注列表。
+	 */
+	private HashSet<SinaMicroblogUser> idols=new HashSet<SinaMicroblogUser>();
+	/**
+	 * 返回新浪微博用户的友好显示名称，对应新浪微博用户信息的name字段。
 	 * @return name字段
 	 */
 	public String getName() {
 		return name;
 	}
 	/**
+	 * 设置新浪微博用户的友好显示名称，对应新浪微博用户信息的name字段。
 	 * @param name name的新值。
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 	/**
+	 * 返回新浪微博用户的用户昵称，对应新浪微博用户信息的screen_name字段。
 	 * @return screenName字段。
 	 */
 	public String getScreenName() {
 		return screenName;
 	}
 	/**
+	 * 设置新浪微博用户的用户昵称，对应新浪微博用户信息的screen_name字段。
 	 * @param screenName screenName的新值。
 	 */
 	public void setScreenName(String screenName) {
@@ -285,6 +298,30 @@ public class SinaMicroblogUser extends MicroblogUser {
 			u.setStatusesCount(user.getStatusesCount());
 			return u;
 		}
+	}
+	@Override
+	public void addFan(MicroblogUser fan) {
+		if (fan instanceof SinaMicroblogUser)
+		{
+			SinaMicroblogUser suser=(SinaMicroblogUser) fan;
+			if (fans.add(suser))
+				suser.addIdol(this);
+		}
+		else
+			System.err.println("请使用新浪微博用户！且fan不为null！");
+		
+	}
+	@Override
+	public void addIdol(MicroblogUser idol) {
+		if(idol instanceof SinaMicroblogUser)
+		{
+			SinaMicroblogUser suser=(SinaMicroblogUser)idol;
+			if(idols.add(suser))
+				suser.addFan(this);
+		}
+		else
+			System.err.println("请使用新浪微博用户！且idol不为null！");
+		
 	}
 
 }

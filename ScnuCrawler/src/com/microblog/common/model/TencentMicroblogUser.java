@@ -46,24 +46,36 @@ public class TencentMicroblogUser extends MicroblogUser {
 	 */
 	private String nick="";
 	/**
+	 * 微博用户粉丝列表。
+	 */
+	private HashSet<TencentMicroblogUser> fans=new HashSet<TencentMicroblogUser>();
+	/**
+	 * 微博用户关注列表。
+	 */
+	private HashSet<TencentMicroblogUser> idols=new HashSet<TencentMicroblogUser>();
+	/**
+	 * 返回腾讯微博用户的用户唯一id，对应腾讯微博用户信息的openid字段。
 	 * @return openId字段
 	 */
 	public String getOpenId() {
 		return openId;
 	}
 	/**
+	 * 设置腾讯微博用户的用户唯一id，对应腾讯微博用户信息的openid字段。
 	 * @param openId openId的新值。
 	 */
 	public void setOpenId(String openId) {
 		this.openId = openId;
 	}
 	/**
+	 * 返回腾讯微博用户的用户昵称，对应腾讯微博用户信息的nick字段。
 	 * @return nick字段
 	 */
 	public String getNick() {
 		return nick;
 	}
 	/**
+	 * 设置腾讯微博用户的用户昵称，对应腾讯微博用户信息的nick字段。
 	 * @param nick nick的新值。
 	 */
 	public void setNick(String nick) {
@@ -153,7 +165,7 @@ public class TencentMicroblogUser extends MicroblogUser {
 		}
 
 		@Override
-		public ArrayList<? extends MicroblogData> getUserStatuses() {
+		public ArrayList<TencentMicroblogData> getUserStatuses() {
 			int weiboCount=0;
 			int statusesPerPage=70;
 			boolean isFirstTime = true;
@@ -440,7 +452,7 @@ public class TencentMicroblogUser extends MicroblogUser {
 			mdata.setMicroblogID(statusJsonObj.getString("id"));
 			mdata.setUser(user2MicroblogUser(statusJsonObj));
 			try {
-				mdata.setText(statusJsonObj.getString("text").replaceAll("<a.*?>", "").replaceAll("</a>", "").replaceAll("&gt;", ">").replaceAll("&lt;", "<").replaceAll("&nbsp;", " ").replaceAll("&amp;", "&").replaceAll("&quot;", "\""));
+				mdata.setText(statusJsonObj.getString("text").replaceAll("<a.*?>", "").replaceAll("</a>", "").replaceAll("&gt;", ">").replaceAll("&lt;", "<").replaceAll("&nbsp;", " ").replaceAll("&amp;", "&").replaceAll("&quot;", "\"").replaceAll("&apos;", "'").replaceAll("&#\\d+;", ""));
 				mdata.setPicSrc(statusJsonObj.getString("image"));
 				long createTime =statusJsonObj.getLong("timestamp")*1000;
 				mdata.setCreatTime(createTime);
@@ -493,6 +505,30 @@ public class TencentMicroblogUser extends MicroblogUser {
 			else
 				throw new JSONException("返回的微博信息中name字段不正确。");
 		}
+		
+	}
+	@Override
+	public void addFan(MicroblogUser fan) {
+		if (fan instanceof TencentMicroblogUser)
+		{
+			TencentMicroblogUser suser=(TencentMicroblogUser) fan;
+			if (fans.add(suser))
+				suser.addIdol(this);
+		}
+		else
+			System.err.println("请使用腾讯微博用户！且fan不为null！");
+		
+	}
+	@Override
+	public void addIdol(MicroblogUser idol) {
+		if(idol instanceof TencentMicroblogUser)
+		{
+			TencentMicroblogUser suser=(TencentMicroblogUser)idol;
+			if(idols.add(suser))
+				suser.addFan(this);
+		}
+		else
+			System.err.println("请使用腾讯微博用户！且idol不为null！");
 		
 	}
 

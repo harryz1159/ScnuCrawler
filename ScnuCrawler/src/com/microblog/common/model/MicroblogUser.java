@@ -58,23 +58,15 @@ public abstract class MicroblogUser implements java.io.Serializable{
 	 */
 	private long sinceCollectTime = 0;
 	/**
-	 * 微博用户粉丝列表。
+	 * 为微博用户添加粉丝。
+	 * @param fan 粉丝。
 	 */
-	private HashSet<MicroblogUser> fans=new HashSet<MicroblogUser>();
+	public abstract void addFan(MicroblogUser fan);
 	/**
-	 * 微博用户关注列表。
+	 * 为微博用户添加关注。
+	 * @param idol 关注。
 	 */
-	private HashSet<MicroblogUser> idols=new HashSet<MicroblogUser>();
-	public void addFan(MicroblogUser fan)
-	{
-		if(fans.add(fan))
-			fan.addIdol(this);
-	}
-	public void addIdol(MicroblogUser idol)
-	{
-		if(idols.add(idol))
-			idol.addFan(this);
-	}
+	public abstract void addIdol(MicroblogUser idol);
 
 	
 	/**
