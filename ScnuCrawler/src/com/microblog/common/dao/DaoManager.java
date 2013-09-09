@@ -142,16 +142,6 @@ public class DaoManager {
 		return pm.makePersistent(pc);
 	}
 	/**
-	 * 设置特定微博用户的状态。
-	 * @param user 微博用户。
-	 * @param state 状态（是否之后要被访问）。
-	 */
-	public void setUserState(MicroblogUser user,boolean state)
-	{
-		user.setToBeView(state);
-		pm.makePersistent(user);
-	}
-	/**
 	 * 获取toBeView为指定值的微博用户列表。粉丝数少于2且关注数少于2且最近抓取过的微博用户不在返回列表中。
 	 * @param type 微博用户类型（新浪or腾讯）。
 	 * @param state toBeView的指定值。

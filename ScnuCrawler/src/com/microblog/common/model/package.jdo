@@ -55,6 +55,20 @@
             <field
                   name="nick"
                   persistence-modifier="none"/>
+            <field
+                  name="fans" table="TENCENT_FANS_LIST" mapped-by="idols">
+                <collection element-type="com.microblog.common.model.TencentMicroblogUser"/>
+                <join>
+                  <column name="USER_ID"/>
+                </join>
+                <element>
+                  <column name="FAN_ID"/>
+                </element>
+            </field>
+            <field
+                  name="idols" mapped-by="fans">
+                <collection element-type="com.microblog.common.model.TencentMicroblogUser"/>
+            </field>
         </class>
         <class
               name="TencentMicroblogData" detachable="true">
@@ -108,6 +122,20 @@
             <field
                   name="screenName"
                   persistence-modifier="none"/>
+            <field
+                  name="fans" table="SINA_FANS_LIST" mapped-by="idols">
+                <collection element-type="com.microblog.common.model.SinaMicroblogUser"/>
+                <join>
+                  <column name="USER_ID"/>
+                </join>
+                <element>
+                  <column name="FAN_ID"/>
+                </element>
+            </field>
+            <field
+                  name="idols" mapped-by="fans">
+                <collection element-type="com.microblog.common.model.SinaMicroblogUser"/>
+            </field>
         </class>
     </package>
 </jdo>

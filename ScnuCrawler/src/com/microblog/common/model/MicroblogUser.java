@@ -66,7 +66,7 @@ public abstract class MicroblogUser implements java.io.Serializable{
 	 * 返回对用户粉丝进行迭代的迭代器。注意：此方法返回的迭代器是快速失败 的：在创建迭代器之后，如果对 set 进行修改，除非通过迭代器自身的 remove 方法，否则在任何时间以任何方式对其进行修改，Iterator 都将抛出 ConcurrentModificationException。
 	 * @return 用户粉丝迭代器。
 	 */
-	public abstract Iterator<? extends MicroblogUser> FanIterator();
+	public abstract Iterator<? extends MicroblogUser> fanIterator();
 	/**
 	 * 如果指定微博用户存在于粉丝列表中，则将其移除。
 	 * @param fan 指定微博用户。
@@ -82,7 +82,7 @@ public abstract class MicroblogUser implements java.io.Serializable{
 	 * 返回对用户关注进行迭代的迭代器。注意：此方法返回的迭代器是快速失败 的：在创建迭代器之后，如果对 set 进行修改，除非通过迭代器自身的 remove 方法，否则在任何时间以任何方式对其进行修改，Iterator 都将抛出 ConcurrentModificationException。
 	 * @return 用户关注迭代器。
 	 */
-	public abstract Iterator<? extends MicroblogUser> IdolIterator();
+	public abstract Iterator<? extends MicroblogUser> idolIterator();
 	/**
 	 * 如果指定微博用户存在于关注列表中，则将其移除。
 	 * @param idol 指定微博用户。

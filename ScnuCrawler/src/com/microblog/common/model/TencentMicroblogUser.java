@@ -7,6 +7,7 @@ import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import org.apache.commons.httpclient.ConnectTimeoutException;
 import org.json.JSONArray;
@@ -530,6 +531,46 @@ public class TencentMicroblogUser extends MicroblogUser {
 		else
 			System.err.println("请使用腾讯微博用户！且idol不为null！");
 		
+	}
+	@Override
+	public Iterator<? extends MicroblogUser> fanIterator() {
+		return fans.iterator();
+	}
+	@Override
+	public boolean removeFan(MicroblogUser fan) {
+		if(fan instanceof TencentMicroblogUser)
+			if(fans.remove(fan))
+			{
+				fan.removeIdol(this);
+				return true;
+			}
+			else
+				return false;
+		else
+		{
+			System.err.println("请使用腾讯微博用户！且fan不为null！");
+			return false;
+		}
+	}
+	@Override
+	public Iterator<? extends MicroblogUser> idolIterator() {
+		return idols.iterator();
+	}
+	@Override
+	public boolean removeIdol(MicroblogUser idol) {
+		if(idol instanceof TencentMicroblogUser)
+			if(idols.remove(idol))
+			{
+				idol.removeFan(this);
+				return true;
+			}
+			else
+				return false;
+		else
+		{
+			System.err.println("请使用腾讯微博用户！且idol不为null！");
+			return false;
+		}
 	}
 
 }

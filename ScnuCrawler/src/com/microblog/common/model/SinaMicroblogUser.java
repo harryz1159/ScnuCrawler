@@ -325,7 +325,7 @@ public class SinaMicroblogUser extends MicroblogUser {
 		
 	}
 	@Override
-	public Iterator<SinaMicroblogUser> FanIterator() {
+	public Iterator<SinaMicroblogUser> fanIterator() {
 		return fans.iterator();
 	}
 	@Override
@@ -345,7 +345,7 @@ public class SinaMicroblogUser extends MicroblogUser {
 		}
 	}
 	@Override
-	public Iterator<? extends MicroblogUser> IdolIterator() {
+	public Iterator<? extends MicroblogUser> idolIterator() {
 		return idols.iterator();
 	}
 	@Override

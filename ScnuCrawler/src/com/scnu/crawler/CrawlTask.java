@@ -11,8 +11,10 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 
@@ -155,7 +157,7 @@ public class CrawlTask {
 					return;
 				}
 			}
-			dm.setUserState(startUser, true);
+			startUser.setToBeView(true);
 		}
 		int nullTimes=0;
 		while(nullTimes<2)
@@ -231,7 +233,19 @@ public class CrawlTask {
 								e.printStackTrace();
 								continue;
 							}
-						dm.setUserState(fan, true);
+						fan.setToBeView(true);
+						user.addFan(fan);
+					}
+					HashSet<String> fanSet=new HashSet<String>(Arrays.asList(fans));
+					Iterator<? extends MicroblogUser> fanIterator=user.fanIterator();
+					while(fanIterator.hasNext())
+					{
+						MicroblogUser oldFan=fanIterator.next();
+						if(!fanSet.contains(oldFan))
+						{
+							fanIterator.remove();
+							oldFan.removeIdol(user);
+						}
 					}
 				}
 				String[] idols=witf.getUserIdolsList();
@@ -250,10 +264,22 @@ public class CrawlTask {
 								e.printStackTrace();
 								continue;
 							}
-						dm.setUserState(idol, true);
+						idol.setToBeView(true);
+						user.addIdol(idol);
+					}
+					HashSet<String> idolSet=new HashSet<String>(Arrays.asList(idols));
+					Iterator<? extends MicroblogUser> idolIterator=user.idolIterator();
+					while(idolIterator.hasNext())
+					{
+						MicroblogUser oldIdol=idolIterator.next();
+						if(!idolSet.contains(oldIdol))
+						{
+							idolIterator.remove();
+							oldIdol.removeIdol(user);
+						}
 					}
 				}
-				dm.setUserState(user, false);
+				user.setToBeView(false);
 				dm.commit();
 			}
 			dm.closeQuery(toBeView);
