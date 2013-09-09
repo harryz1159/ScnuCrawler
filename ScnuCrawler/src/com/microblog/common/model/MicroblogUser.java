@@ -1,5 +1,7 @@
 package com.microblog.common.model;
 
+import java.util.Iterator;
+
 import com.scnu.crawler.util.web.WebInterface;
 
 /**
@@ -61,10 +63,32 @@ public abstract class MicroblogUser implements java.io.Serializable{
 	 */
 	public abstract void addFan(MicroblogUser fan);
 	/**
+	 * 返回对用户粉丝进行迭代的迭代器。注意：此方法返回的迭代器是快速失败 的：在创建迭代器之后，如果对 set 进行修改，除非通过迭代器自身的 remove 方法，否则在任何时间以任何方式对其进行修改，Iterator 都将抛出 ConcurrentModificationException。
+	 * @return 用户粉丝迭代器。
+	 */
+	public abstract Iterator<? extends MicroblogUser> FanIterator();
+	/**
+	 * 如果指定微博用户存在于粉丝列表中，则将其移除。
+	 * @param fan 指定微博用户。
+	 * @return 如果粉丝列表中包含指定微博用户，则返回 {@code true}。
+	 */
+	public abstract boolean removeFan(MicroblogUser fan);
+	/**
 	 * 为微博用户添加关注。
 	 * @param idol 关注。
 	 */
 	public abstract void addIdol(MicroblogUser idol);
+	/**
+	 * 返回对用户关注进行迭代的迭代器。注意：此方法返回的迭代器是快速失败 的：在创建迭代器之后，如果对 set 进行修改，除非通过迭代器自身的 remove 方法，否则在任何时间以任何方式对其进行修改，Iterator 都将抛出 ConcurrentModificationException。
+	 * @return 用户关注迭代器。
+	 */
+	public abstract Iterator<? extends MicroblogUser> IdolIterator();
+	/**
+	 * 如果指定微博用户存在于关注列表中，则将其移除。
+	 * @param idol 指定微博用户。
+	 * @return 如果关注列表中包含指定微博用户，则返回 {@code true}。
+	 */
+	public abstract boolean removeIdol(MicroblogUser idol);
 
 	
 	/**

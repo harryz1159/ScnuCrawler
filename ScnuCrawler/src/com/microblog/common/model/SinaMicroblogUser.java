@@ -6,6 +6,7 @@ package com.microblog.common.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import weibo4j.Friendships;
 import weibo4j.Timeline;
@@ -322,6 +323,46 @@ public class SinaMicroblogUser extends MicroblogUser {
 		else
 			System.err.println("请使用新浪微博用户！且idol不为null！");
 		
+	}
+	@Override
+	public Iterator<SinaMicroblogUser> FanIterator() {
+		return fans.iterator();
+	}
+	@Override
+	public boolean removeFan(MicroblogUser fan) {
+		if(fan instanceof SinaMicroblogUser)
+			if(fans.remove(fan))
+			{
+				fan.removeIdol(this);
+				return true;
+			}
+			else
+				return false;
+		else
+		{
+			System.err.println("请使用新浪微博用户！且fan不为null！");
+			return false;
+		}
+	}
+	@Override
+	public Iterator<? extends MicroblogUser> IdolIterator() {
+		return idols.iterator();
+	}
+	@Override
+	public boolean removeIdol(MicroblogUser idol) {
+		if(idol instanceof SinaMicroblogUser)
+			if(idols.remove(idol))
+			{
+				idol.removeFan(this);
+				return true;
+			}
+			else
+				return false;
+		else
+		{
+			System.err.println("请使用新浪微博用户！且idol不为null！");
+			return false;
+		}
 	}
 
 }
