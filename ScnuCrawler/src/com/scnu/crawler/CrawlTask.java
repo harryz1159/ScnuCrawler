@@ -241,7 +241,7 @@ public class CrawlTask {
 					while(fanIterator.hasNext())
 					{
 						MicroblogUser oldFan=fanIterator.next();
-						if(!fanSet.contains(oldFan))
+						if(!fanSet.contains(oldFan.getKey()))
 						{
 							fanIterator.remove();
 							oldFan.removeIdol(user);
@@ -272,7 +272,7 @@ public class CrawlTask {
 					while(idolIterator.hasNext())
 					{
 						MicroblogUser oldIdol=idolIterator.next();
-						if(!idolSet.contains(oldIdol))
+						if(!idolSet.contains(oldIdol.getKey()))
 						{
 							idolIterator.remove();
 							oldIdol.removeIdol(user);
