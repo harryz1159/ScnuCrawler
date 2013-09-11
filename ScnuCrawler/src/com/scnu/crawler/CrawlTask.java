@@ -162,6 +162,7 @@ public class CrawlTask {
 		int nullTimes=0;
 		while(nullTimes<2)
 		{
+			dm.begin();
 			Collection<? extends MicroblogUser> toBeView=dm.getUserByState(type, true);
 			if(toBeView==null||toBeView.isEmpty())
 			{
@@ -179,7 +180,7 @@ public class CrawlTask {
 			nullTimes=0;
 			for(MicroblogUser user:toBeView)
 			{
-				dm.begin();
+				//dm.begin();
 				WebInterface witf=user.webInterface();
 				if(!witf.updateUserInfo())
 				{
@@ -280,9 +281,10 @@ public class CrawlTask {
 					}
 				}
 				user.setToBeView(false);
-				dm.commit();
+				//dm.commit();
 			}
 			dm.closeQuery(toBeView);
+			dm.commit();
 			try {
 				Thread.sleep(3600);
 			} catch (InterruptedException e) {
