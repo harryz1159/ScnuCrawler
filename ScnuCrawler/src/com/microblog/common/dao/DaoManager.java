@@ -151,16 +151,18 @@ public class DaoManager {
 	{
 		long currentTime=new Date().getTime();
 		Collection<T> result=null;
-		/*try {
-			tx.begin();*/
+		try {
+			tx.begin();
 			q.setClass(type);
 			q.setFilter("(idolsCount>2||fansCount>2||currentTime-sinceCollectTime>min_interval)&&toBeView==state");
 			q.declareParameters("long currentTime,long min_interval,boolean state");
+			q.setRange(0, 100000);
+			q.setOrdering("accessOrder asc");
 			q.getFetchPlan().setFetchSize(FetchPlan.FETCH_SIZE_OPTIMAL);
-			q.addExtension("datanucleus.query.loadResultsAtCommit", "false");
-			result = pm.detachCopyAll((List<T>)q.execute(currentTime, 30 * 60 * 1000, state));
+			//q.addExtension("datanucleus.query.loadResultsAtCommit", "false");
+			result = (List<T>)q.execute(currentTime, 30 * 60 * 1000, state);
 			//System.out.println(result.size());
-			/*tx.commit();
+			tx.commit();
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -168,7 +170,7 @@ public class DaoManager {
 		{
 			if(tx.isActive())
 				tx.rollback();
-		}*/
+		}
 		return result;
 	}
 	/**

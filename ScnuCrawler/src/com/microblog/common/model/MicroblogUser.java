@@ -22,6 +22,10 @@ public abstract class MicroblogUser implements java.io.Serializable{
 	 * 标识本用户是否应在之后被遍历。
 	 */
 	private boolean toBeView=false;
+	/**
+	 * 标识本用户在之后遍历的次序。
+	 */
+	private long accessOrder;
 	
 	/**
 	 * 用户唯一标识（新浪微博用户信息的id字段、腾讯微博用户信息的name字段）。
@@ -293,6 +297,7 @@ public abstract class MicroblogUser implements java.io.Serializable{
 	 */
 	public void setToBeView(boolean toBeView) {
 		this.toBeView = toBeView;
+		accessOrder=System.currentTimeMillis();
 	}
 
 	/**

@@ -11,6 +11,9 @@
                   name="toBeView"
                   persistence-modifier="persistent"/>
             <field
+                  name="accessOrder"
+                  persistence-modifier="persistent"/>
+            <field
                   name="key"
                   persistence-modifier="persistent"
                   primary-key="true">
